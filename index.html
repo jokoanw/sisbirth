@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surat Buat Teteh (Final)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Ephesis&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+    <title>Surat Buat Teteh (Final Clean)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-color: #202020; /* Background layar gelap */
-            --paper: #f4f1ea;    /* Warna kertas krem enak di mata */
-            --gold: #d4af37;     /* Emas */
-            --text: #1a1a1a;     /* Hitam pekat untuk tulisan */
+            --bg-color: #202020;
+            --paper: #f9f9f9;    /* Kertas lebih putih dikit biar clean */
+            --gold: #c5a059;     
+            --text: #222;     
             
             /* Ukuran Buku */
             --book-w: 350px; 
             --book-h: 520px;
-            --speed: 0.8s;       /* Kecepatan animasi */
+            --speed: 0.6s;       /* Kecepatan animasi lebih snappy */
         }
 
         body {
@@ -24,7 +24,7 @@
             background: var(--bg-color);
             height: 100vh;
             display: flex; justify-content: center; align-items: center;
-            font-family: 'Cormorant Garamond', serif;
+            font-family: 'Montserrat', sans-serif; /* Default font bersih */
             overflow: hidden;
         }
 
@@ -35,13 +35,12 @@
             height: var(--book-h);
             perspective: 1500px;
             transform-style: preserve-3d;
-            /* Transisi untuk efek geser ke tengah */
-            transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+            /* Transisi geser ke tengah yang smooth */
+            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
         }
 
-        /* CLASS KHUSUS SAAT BUKU DIBUKA (Auto Center) */
+        /* CLASS SAAT BUKU DIBUKA (GESER KANAN) */
         .book.opened {
-            /* Geser buku ke kanan setengah lebar halaman biar pas di tengah layar */
             transform: translateX(calc(var(--book-w) / 2));
         }
 
@@ -51,10 +50,10 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             background-color: var(--paper);
-            transform-origin: left center; /* Engsel di kiri */
+            transform-origin: left center;
             transition: transform var(--speed) cubic-bezier(0.645, 0.045, 0.355, 1);
             transform-style: preserve-3d;
-            box-shadow: 2px 2px 15px rgba(0,0,0,0.2);
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.15);
             cursor: pointer;
             border-radius: 0 4px 4px 0;
         }
@@ -65,55 +64,62 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             backface-visibility: hidden;
-            padding: 30px;
+            padding: 35px; /* Padding lebih lega */
             box-sizing: border-box;
             overflow: hidden;
         }
 
         .front {
             z-index: 2;
-            /* Bayangan lipatan dalam */
-            background-image: linear-gradient(to right, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 10%);
+            background-image: linear-gradient(to right, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0) 5%);
         }
 
         .back {
             transform: rotateY(180deg);
             z-index: 1;
-            /* Bayangan lipatan belakang */
-            background-image: linear-gradient(to left, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 10%);
-            border-right: 1px solid #ddd;
+            background-image: linear-gradient(to left, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0) 5%);
+            border-right: 1px solid #eee;
         }
 
-        /* LOGIKA FLIP */
         .flipped {
             transform: rotateY(-180deg);
         }
 
         /* --- TYPOGRAPHY --- */
-        h1, h2 { font-family: 'Cinzel Decorative'; color: var(--text); margin: 0; line-height: 1.2; }
+        h1, h2 { font-family: 'Cinzel Decorative', serif; color: var(--text); margin: 0; line-height: 1.2; }
         
-        /* Tulisan tangan untuk surat (Warna Gelap Jelas) */
-        .handwriting {
-            font-family: 'Ephesis', cursive;
-            font-size: 1.9rem;
-            color: #000; /* Hitam pekat */
-            line-height: 1.4;
-            text-align: left;
+        /* TEXT BODY CLEAN & MINIMALIS */
+        .body-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem; /* Ukuran pas baca */
+            font-weight: 400;
+            color: #333;
+            line-height: 1.8; /* Spasi antar baris lega */
+            text-align: justify; /* Rata kiri kanan */
+            margin-bottom: 15px;
+        }
+
+        /* Drop Cap (Huruf Awal Besar) */
+        .drop-cap {
+            float: left; font-size: 3.5rem; line-height: 0.8; 
+            font-family: 'Cinzel Decorative'; margin-right: 10px; 
+            color: var(--gold);
         }
         
         .page-num {
-            position: absolute; bottom: 15px; width: 100%; text-align: center;
-            font-family: 'Montserrat'; font-size: 0.7rem; color: #888; left:0;
+            position: absolute; bottom: 20px; width: 100%; text-align: center;
+            font-size: 0.7rem; color: #999; left:0; letter-spacing: 2px;
         }
 
-        /* --- COVER PHOTO STYLE --- */
+        /* --- COVER PHOTO --- */
         .cover-photo {
             width: 100%; height: 100%; object-fit: cover;
             position: absolute; top:0; left:0;
+            filter: brightness(0.9);
         }
         .cover-overlay {
             position: absolute; top:0; left:0; width:100%; height:100%;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.8));
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.8));
         }
         .cover-content {
             position: relative; z-index: 10; color: white;
@@ -122,11 +128,11 @@
             text-align: center;
         }
 
-        /* RESPONSIVE HP */
+        /* RESPONSIVE */
         @media (max-width: 768px) {
             :root { --book-w: 85vw; --book-h: 120vw; }
-            .book.opened { transform: translateX(0); } /* Di HP ga usah geser, layar sempit */
-            .handwriting { font-size: 1.5rem; }
+            .book.opened { transform: translateX(0); } /* Mobile ga usah geser */
+            .body-text { font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -136,113 +142,128 @@
         <source src="lagu_piano.mp3" type="audio/mpeg">
     </audio>
 
-    <div style="position: fixed; top: 20px; color: rgba(255,255,255,0.5); font-size: 0.8rem; font-family: sans-serif;">
-        Tap halaman untuk membalik
+    <div style="position: fixed; top: 20px; color: rgba(255,255,255,0.4); font-size: 0.7rem; letter-spacing: 1px;">
+        TAP HALAMAN UNTUK MEMBALIK
     </div>
 
     <div class="book" id="book">
         
-        <div class="page" id="p1" style="z-index: 5;">
+        <div class="page" id="p1">
             <div class="front" style="padding: 0;">
                 <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1920&auto=format&fit=crop" class="cover-photo">
                 <div class="cover-overlay"></div>
                 
                 <div class="cover-content">
-                    <div style="font-family: 'Montserrat'; letter-spacing: 4px; font-size: 0.9rem; color: var(--gold);">THE HOMECOMING</div>
-                    <h1 style="font-size: 4.5rem; color: white; text-shadow: 0 5px 15px rgba(0,0,0,0.5);">TETEH</h1>
-                    <div style="font-family: 'Montserrat'; font-size: 0.8rem; margin-top: 10px; opacity: 0.8;">FEB 2026 EDITION</div>
+                    <div style="font-family: 'Montserrat'; letter-spacing: 4px; font-size: 0.8rem; color: var(--gold);">SPECIAL EDITION</div>
+                    <h1 style="font-size: 4rem; color: white; text-shadow: 0 5px 20px rgba(0,0,0,0.6);">TETEH</h1>
+                    <div style="font-size: 0.7rem; margin-top: 15px; opacity: 0.8; letter-spacing: 2px;">THE HOMECOMING ISSUE</div>
                 </div>
             </div>
             <div class="back">
-                <h2 style="text-align: center; color: var(--gold); margin-top: 20px;">Preface</h2>
-                <div style="margin-top: 30px; text-align: center; font-style: italic; color: #555;">
+                <div style="text-align: center; margin-top: 20px; border-bottom: 2px solid var(--gold); padding-bottom: 20px;">
+                    <h2 style="color: var(--text);">Preface</h2>
+                    <div style="font-size: 0.7rem; color: #888; margin-top: 5px;">A NOTE FROM HOME</div>
+                </div>
+                <div style="margin-top: 40px; text-align: center; font-style: italic; color: #555; padding: 0 20px;">
                     "Jauh di mata, tapi selalu dekat di doa.<br>
                     Surat kecil ini dikirim dari rumah, <br>
                     melintasi ribuan kilometer untukmu."
                 </div>
-                <div style="margin-top: 50px; text-align: center;">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2909/2909249.png" width="50" style="opacity: 0.5;">
+                <div style="text-align: center; margin-top: 60px;">
+                    <span style="font-size: 2rem; color: var(--gold);">V.26</span>
                 </div>
                 <div class="page-num">1</div>
             </div>
         </div>
 
-        <div class="page" id="p2" style="z-index: 4;">
+        <div class="page" id="p2">
             <div class="front">
-                <h2 style="border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-bottom: 20px;">Dear Teteh,</h2>
-                <div class="handwriting">
-                    Assalamualaikum Teh, Happy Birthday!<br><br>
-                    Gak kerasa ya umur nambah lagi. Tahun ini mungkin kita gak bisa tiup lilin bareng secara langsung, tapi doa dari sini gak pernah putus.
-                    Semoga di sana sehat terus, rezekinya lancar, dan skripsi/kerjaannya dimudahkan.
+                <h2 style="font-size: 1.5rem; margin-bottom: 20px;">Dear Teteh,</h2>
+                
+                <div class="body-text">
+                    <span class="drop-cap">A</span>ssalamualaikum Teh, Happy Birthday! Gak kerasa ya umur nambah lagi. Tahun ini mungkin kita gak bisa tiup lilin bareng secara langsung, tapi doa dari sini gak pernah putus.
+                </div>
+                <div class="body-text">
+                    Semoga di Okayama sehat terus, rezekinya lancar, dan segala urusan skripsi atau kerjaannya dimudahkan.
                 </div>
                 <div class="page-num">2</div>
             </div>
             <div class="back">
-                <div class="handwriting">
-                    Jujur, rumah sepi banget ga ada Teteh. <br>
-                    Ibu sering masak makanan kesukaan Teteh, terus kita jadi inget, "Wah kalau ada Teteh pasti ludes nih". <br>
-                    Kucing di rumah juga kerjaannya tidur mulu nungguin tuannya pulang wkwk.
+                <div class="body-text" style="margin-top: 20px;">
+                    Jujur, rumah sepi banget ga ada Teteh. Ibu sering masak makanan kesukaan Teteh, terus kita jadi inget, "Wah kalau ada Teteh pasti ludes nih".
+                </div>
+                <div class="body-text">
+                    Kucing di rumah juga kerjaannya tidur mulu nungguin tuannya pulang. Kita semua kangen berat sama keributan Teteh.
                 </div>
                 <div class="page-num">3</div>
             </div>
         </div>
 
-        <div class="page" id="p3" style="z-index: 3;">
+        <div class="page" id="p3">
             <div class="front">
-                <h2 style="border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-bottom: 20px;">Tentang Rindu</h2>
-                <div class="handwriting">
-                    Inget gak waktu kita jalan-jalan terakhir sebelum Teteh berangkat? <br>
-                    Foto-fotonya masih aku simpen. Kadang kalau kangen, aku liatin foto itu sambil mikir, "Hebat ya Teteh udah berani melangkah sejauh itu."
+                <h2 style="font-size: 1.5rem; margin-bottom: 20px;">Tentang Rindu</h2>
+                <div class="body-text">
+                    Inget gak waktu kita jalan-jalan terakhir sebelum Teteh berangkat? Foto-fotonya masih aku simpen.
+                </div>
+                <div class="body-text">
+                    Kadang kalau kangen, aku liatin foto itu sambil mikir, "Hebat ya Teteh udah berani melangkah sejauh itu sendirian." Kamu inspirasi banget buat aku.
                 </div>
                 <div class="page-num">4</div>
             </div>
             <div class="back">
-                <div style="width: 100%; height: 60%; background: #fff; padding: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transform: rotate(2deg);">
+                <div style="width: 100%; height: 65%; background: #fff; padding: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transform: rotate(1deg);">
                     <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=1887&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
-                <div style="text-align: center; margin-top: 20px; font-family: 'Ephesis'; font-size: 1.5rem;">
-                    See you soon!
+                <div style="text-align: center; margin-top: 25px; font-size: 0.8rem; letter-spacing: 2px;">
+                    SEE YOU SOON
                 </div>
                 <div class="page-num">5</div>
             </div>
         </div>
 
-        <div class="page" id="p4" style="z-index: 2;">
+        <div class="page" id="p4">
             <div class="front">
-                <h2 style="border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-bottom: 20px;">Harapan</h2>
-                <div class="handwriting">
-                    Pulanglah dengan selamat, Teh. <br>
-                    Kita udah siapin banyak cerita buat dibahas sampai pagi. <br>
-                    Aku bangga banget punya kakak kayak Teteh. Terima kasih udah jadi contoh yang keren buat adiknya.
+                <h2 style="font-size: 1.5rem; margin-bottom: 20px;">Harapan</h2>
+                <div class="body-text">
+                    Pulanglah dengan selamat, Teh. Kita udah siapin banyak cerita buat dibahas sampai pagi. 
+                </div>
+                <div class="body-text">
+                    Aku bangga banget punya kakak kayak Teteh. Terima kasih udah jadi contoh yang keren buat adiknya. Jangan lupa oleh-oleh ya (canda deng).
                 </div>
                 <div class="page-num">6</div>
             </div>
             <div class="back">
-                <div class="handwriting" style="text-align: center; margin-top: 50px;">
-                    Sekali lagi,<br>
-                    Selamat Ulang Tahun!<br><br>
-                    We Love You,<br>
-                    <span style="font-size: 2.5rem; color: var(--gold);">Afdhi & Keluarga</span>
+                <div style="text-align: center; margin-top: 40px;">
+                    <div class="body-text" style="text-align: center; font-style: italic;">
+                        Sekali lagi,<br>Selamat Ulang Tahun!
+                    </div>
+                    <div style="margin-top: 30px; font-weight: bold; font-size: 1.2rem;">
+                        WE LOVE YOU
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.9rem;">
+                        Afdhi & Keluarga
+                    </div>
+                    <div style="font-size: 3rem; margin-top: 30px; color: var(--gold);">❤</div>
                 </div>
                 <div class="page-num">7</div>
             </div>
         </div>
 
-        <div class="page" id="p5" style="z-index: 1;">
-            <div class="front" style="display: flex; justify-content: center; align-items: center; background-color: #fcfcfc;">
-                <div style="text-align: center;">
-                    <h1 style="font-size: 5rem; color: #1a1a1a;">END</h1>
-                    <div style="font-family: 'Montserrat'; letter-spacing: 2px; margin-top: 10px;">MENUNGGU KEPULANGANMU</div>
-                    <button onclick="closeBook()" style="margin-top: 40px; padding: 10px 20px; background: var(--text); color: white; border: none; font-family: 'Montserrat'; cursor: pointer;">
+        <div class="page" id="p5">
+            <div class="front" style="display: flex; justify-content: center; align-items: center; text-align: center;">
+                <div>
+                    <h1 style="font-size: 4rem; color: #ccc;">END</h1>
+                    <div style="margin-top: 10px; font-size: 0.7rem; letter-spacing: 2px;">MENUNGGU KEPULANGANMU</div>
+                    
+                    <button onclick="closeBook()" style="margin-top: 50px; padding: 12px 30px; background: var(--text); color: white; border: none; font-family: 'Montserrat'; font-size: 0.8rem; letter-spacing: 1px; cursor: pointer; transition: 0.3s;">
                         TUTUP BUKU
                     </button>
                 </div>
                 <div class="page-num">8</div>
             </div>
-            <div class="back" style="background-color: #111; color: white; display: flex; justify-content: center; align-items: center;">
-                <div style="text-align: center; opacity: 0.5;">
-                    <img src="https://cdn-icons-png.flaticon.com/512/833/833472.png" width="40" style="filter: invert(1); margin-bottom: 10px;">
-                    <div style="font-size: 0.8rem; font-family: sans-serif;">MADE WITH LOVE</div>
+            <div class="back" style="background-color: #111; color: #555; display: flex; justify-content: center; align-items: center;">
+                <div style="text-align: center;">
+                    <div style="font-size: 0.7rem; letter-spacing: 1px;">DESIGNED WITH LOVE</div>
                 </div>
             </div>
         </div>
@@ -255,7 +276,7 @@
         const bgm = document.getElementById('bgm');
         let isAudioPlaying = false;
 
-        // Atur Z-Index Awal
+        // Z-Index Logic
         pages.forEach((page, i) => {
             page.style.zIndex = pages.length - i;
         });
@@ -263,32 +284,30 @@
         pages.forEach((page, i) => {
             page.addEventListener('click', function() {
                 
-                // AUDIO PLAY ON FIRST CLICK
+                // Audio trigger
                 if(!isAudioPlaying) {
                     bgm.play().catch(e => console.log("Audio block"));
                     isAudioPlaying = true;
                 }
 
                 if (this.classList.contains('flipped')) {
-                    // --- ACTION: TUTUP HALAMAN (BALIK KE KANAN) ---
+                    // TUTUP HALAMAN
                     this.classList.remove('flipped');
-                    
-                    // Reset Z-Index setelah animasi selesai
                     setTimeout(() => {
                         this.style.zIndex = pages.length - i;
                     }, 500);
 
-                    // Jika halaman pertama ditutup, geser buku ke tengah lagi
+                    // LOGIKA CENTER: Kalau halaman 1 ditutup, buku geser ke tengah
                     if (i === 0) {
                         book.classList.remove('opened');
                     }
 
                 } else {
-                    // --- ACTION: BUKA HALAMAN (BALIK KE KIRI) ---
+                    // BUKA HALAMAN
                     this.classList.add('flipped');
-                    this.style.zIndex = 10 + i; // Timpa halaman sebelumnya di sisi kiri
+                    this.style.zIndex = 10 + i;
 
-                    // Jika halaman pertama dibuka, geser buku ke kanan (Auto Center)
+                    // LOGIKA CENTER: Kalau halaman 1 dibuka, buku geser kanan
                     if (i === 0) {
                         book.classList.add('opened');
                     }
@@ -296,15 +315,26 @@
             });
         });
 
-        // Fungsi Tombol Tutup Buku
+        // FUNGSI TUTUP BUKU YANG DIPERBAIKI
         function closeBook() {
-            // Tutup dari halaman terakhir ke awal dengan delay
+            // Tutup semua halaman dari belakang ke depan
             for(let i = pages.length - 1; i >= 0; i--) {
                 setTimeout(() => {
                     if(pages[i].classList.contains('flipped')) {
-                        pages[i].click();
+                        // Hapus class flipped
+                        pages[i].classList.remove('flipped');
+                        
+                        // Reset z-index
+                        setTimeout(() => {
+                            pages[i].style.zIndex = pages.length - i;
+                        }, 500);
+
+                        // PENTING: Jika sampai di halaman 0 (cover), reset posisi buku ke tengah
+                        if (i === 0) {
+                            book.classList.remove('opened');
+                        }
                     }
-                }, (pages.length - 1 - i) * 200);
+                }, (pages.length - 1 - i) * 150); // Delay biar animasinya 'satu-satu'
             }
         }
     </script>
