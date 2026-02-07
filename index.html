@@ -3,356 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TETEH: The Ultimate Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>TETEH Magazine: Flip Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
     
     <style>
-        /* --- 1. RESET & VARIABLES --- */
+        /* --- RESET & VARIABLES --- */
         :root {
-            /* Ganti base color jadi lebih hangat (krem kertas) */
-            --bg-color: #f4f1ea; 
-            --text-main: #2b2b2b; /* Hitam soft (tinta) */
-            --text-muted: #666;
-            --accent-gold: #b38b59; /* Emas yang lebih deep/tua */
-            --transition: cubic-bezier(0.22, 1, 0.36, 1);
+            --bg-color: #2c3e50; /* Latar belakang meja/gelap */
+            --paper-color: #f4f1ea;
+            --text-main: #1a1a1a;
+            --gold: #b38b59;
+            --page-width: 350px; /* Ukuran per halaman */
+            --page-height: 500px;
+            --anim-speed: 0.8s;
         }
 
         body {
             margin: 0; padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            background: var(--bg-color);
+            height: 100vh;
+            display: flex; justify-content: center; align-items: center;
             font-family: 'Cormorant Garamond', serif;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
+            overflow: hidden;
         }
 
-        /* --- NEW PAPER TEXTURE OVERLAY (Realistik) --- */
-        .paper-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            /* URL Tekstur Kertas Asli */
-            background-image: url('https://i.imgur.com/KQysF8L.jpg'); 
-            background-size: cover;
-            background-repeat: no-repeat;
-            /* KUNCI REALISTIK: multiply blend mode */
-            mix-blend-mode: multiply; 
-            opacity: 0.5; /* Sesuaikan transparansi tekstur */
-            pointer-events: none; z-index: 9999;
+        /* --- THE BOOK CONTAINER --- */
+        .book {
+            position: relative;
+            width: var(--page-width); 
+            height: var(--page-height);
+            perspective: 1500px; /* Efek 3D */
+            transform-style: preserve-3d;
         }
 
-        /* --- 2. LOADING SCREEN --- */
-        #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-color); z-index: 1000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 1s ease;
-        }
-        .loader-text {
-            font-family: 'Montserrat', sans-serif; letter-spacing: 5px; font-size: 0.8rem;
-            text-transform: uppercase; animation: pulse 1.5s infinite; color: var(--accent-gold);
-        }
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
-
-        /* --- 3. TYPOGRAPHY UTILS --- */
-        h1, h2, h3 { font-family: 'Cinzel Decorative', serif; font-weight: 700; margin: 0; line-height: 1.1; color: var(--text-main); }
-        p { font-size: 1.25rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 20px; }
-        
-        .reveal-text {
-            display: block; opacity: 0; transform: translateY(40px);
-            transition: all 1.2s var(--transition);
-        }
-        .reveal-text.active { opacity: 1; transform: translateY(0); }
-
-        /* --- 4. HERO / COVER SECTION --- */
-        .cover-section {
-            height: 100vh; position: relative; overflow: hidden;
-            display: flex; justify-content: center; align-items: flex-end;
-            padding-bottom: 50px; box-sizing: border-box;
-        }
-
-        .cover-bg-container {
-             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-             z-index: -1; overflow: hidden;
-        }
-
-        .cover-bg {
+        /* --- PAGES CONFIGURATION --- */
+        .page {
+            position: absolute;
             width: 100%; height: 100%;
-            /* GANTI FOTO TETEHMU DI SINI (Portrait HD) */
-            background-image: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop');
-            background-size: cover; background-position: center;
-            transform: scale(1.1); 
-            filter: contrast(1.1) saturate(1.1); /* Sedikit lebih vibrant */
+            top: 0; left: 0;
+            transform-origin: left center; /* Titik putar di kiri (tulang buku) */
+            transition: transform var(--anim-speed) cubic-bezier(0.645, 0.045, 0.355, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        /* DARK GRADIENT OVERLAY (Biar tulisan TETEH kebaca jelas) */
-        .cover-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            /* Gradien gelap dari atas ke transparan */
-            background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 40%, transparent 100%);
-            z-index: 0;
+        /* Sisi Depan & Belakang Halaman */
+        .front, .back {
+            position: absolute;
+            width: 100%; height: 100%;
+            backface-visibility: hidden; /* Sisi sebaliknya ga keliatan transparan */
+            background-color: var(--paper-color);
+            overflow: hidden;
+            display: flex; flex-direction: column;
         }
 
-        /* MASTHEAD (JUDUL MAJALAH) - FIX KETERBACAAN */
-        .masthead {
-            position: absolute; top: 50px; left: 50%; transform: translateX(-50%);
-            width: 90%; text-align: center; z-index: 10;
-        }
-        .masthead h1 {
-            font-size: 13vw; 
-            color: #ffffff; /* PUTIH SOLID */
-            /* Shadow kuat biar misah dari background */
-            text-shadow: 0 5px 30px rgba(0,0,0,0.7); 
-            letter-spacing: -2px; 
-            /* HAPUS mix-blend-mode yang bikin kotor */
-        }
-        .masthead-sub {
-            font-family: 'Montserrat', sans-serif; font-size: 0.9rem; letter-spacing: 5px; color: #ffffff;
-            text-transform: uppercase; border-top: 1px solid rgba(255,255,255,0.7); border-bottom: 1px solid rgba(255,255,255,0.7);
-            padding: 10px 0; display: inline-block; width: 100%;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
-
-        /* HEADLINES KIRI BAWAH */
-        .headlines {
-            width: 90%; color: white; z-index: 5;
-            display: flex; justify-content: space-between; align-items: flex-end;
-        }
-        .main-headline h2 {
-            font-size: 4rem; text-shadow: 0 2px 20px rgba(0,0,0,0.8); color: #fff;
-            border-left: 5px solid var(--accent-gold); padding-left: 20px;
-        }
-        .sub-headline {
-            font-family: 'Montserrat', sans-serif; font-size: 1rem; margin-top: 10px;
-            font-weight: 400; letter-spacing: 1px; max-width: 400px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.8); color: rgba(255,255,255,0.9);
-        }
-
-        /* BARCODE DETAIL */
-        .meta-details {
-            text-align: right; font-family: 'Montserrat', sans-serif; font-size: 0.7rem; opacity: 0.9;
-            text-shadow: 0 1px 5px rgba(0,0,0,0.5); color: white;
-        }
-        .barcode {
-            height: 40px; width: 100px; background: white; margin-top: 10px; margin-left: auto;
-            background-image: linear-gradient(90deg, #000 2px, transparent 2px, #000 4px, transparent 4px, #000 8px, transparent 8px); 
-            background-size: 10px 100%; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        /* --- 5. EDITORIAL SPREAD --- */
-        .content-section {
-            padding: 120px 10%;
-            position: relative; z-index: 2; /* Di atas foto cover */
-            background: var(--bg-color); /* Background kertas */
-            box-shadow: 0 -20px 50px rgba(0,0,0,0.1); /* Bayangan biar misah dari cover */
-        }
-        .editorial-layout {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
-        }
-        .drop-cap {
-            float: left; font-size: 6rem; line-height: 0.7; font-family: 'Cinzel Decorative', serif;
-            margin-right: 15px; color: var(--accent-gold);
+        .front { z-index: 2; }
+        .back { 
+            transform: rotateY(180deg); /* Sisi belakang diputer dulu */
+            z-index: 1; 
+            /* Bayangan lipatan buku di sisi belakang */
+            background-image: linear-gradient(to right, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 10%);
         }
         
-        .pull-quote {
-            font-family: 'Cinzel Decorative', serif; font-size: 2.2rem;
-            color: var(--accent-gold); text-align: center; margin: 60px 0;
-            padding: 30px; border-top: 2px solid var(--accent-gold); border-bottom: 2px solid var(--accent-gold);
-            background: rgba(179, 139, 89, 0.05); /* Background emas tipis */
+        /* Bayangan lipatan buku di sisi depan */
+        .front::after {
+            content: ''; position: absolute; top:0; right:0; width: 100%; height: 100%;
+            background-image: linear-gradient(to left, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 10%);
+            pointer-events: none;
         }
 
-        .editorial-img-frame {
-             position: relative;
-             padding: 20px; border: 1px solid var(--accent-gold); /* Bingkai emas tipis */
+        /* --- Z-INDEX LOGIC (Biar tumpukan bener) --- */
+        #p1 { z-index: 5; }
+        #p2 { z-index: 4; }
+        #p3 { z-index: 3; }
+        #p4 { z-index: 2; }
+
+        /* --- FLIP STATES --- */
+        .flipped {
+            transform: rotateY(-180deg); /* Membalik ke kiri */
         }
 
-        /* --- 6. GALLERY MASONRY --- */
-        .gallery-section {
-            padding: 0 5%; padding-bottom: 100px;
-            background: var(--bg-color); position: relative; z-index: 2;
-        }
-        .gallery-title {
-            text-align: center; margin-bottom: 60px;
-        }
-        .gallery-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;
-        }
-        .gallery-item {
-            position: relative; overflow: hidden; height: 600px;
-            box-shadow: 10px 10px 30px rgba(0,0,0,0.1); /* Bayangan foto */
-        }
-        .gallery-item img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 1.5s var(--transition);
-            filter: sepia(10%) contrast(1.05); /* Sedikit filter biar nyatu sama kertas */
-        }
-        .gallery-item:hover img {
-            transform: scale(1.1); filter: sepia(0%) contrast(1.1);
-        }
-        .caption-overlay {
-            position: absolute; bottom: 20px; left: 20px;
-            background: var(--bg-color); color: var(--text-main); padding: 10px 20px;
-            font-family: 'Montserrat', sans-serif; font-size: 0.8rem; letter-spacing: 1px;
-            opacity: 0; transform: translateY(20px); transition: all 0.5s ease;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
-        }
-        .gallery-item:hover .caption-overlay { opacity: 1; transform: translateY(0); }
+        /* --- CONTENT STYLING --- */
+        h1 { font-family: 'Cinzel Decorative', serif; line-height: 0.9; margin: 0; color: #000; }
+        p { font-size: 1rem; line-height: 1.6; margin-bottom: 15px; color: #333; }
+        
+        .img-fill { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Layout Halaman */
+        .page-content { padding: 30px; height: 100%; box-sizing: border-box; position: relative; }
+        .page-center { display: flex; justify-content: center; align-items: center; text-align: center; }
 
-        /* --- 7. FOOTER --- */
-        .footer-note {
-            text-align: center; padding: 100px 20px; background: #1a1a1a; color: #f4f1ea;
-            position: relative; z-index: 2;
+        /* --- SPECIFIC PAGE DESIGNS --- */
+        
+        /* COVER */
+        .cover-title { font-size: 4rem; margin-top: 20px; text-shadow: 2px 2px 0px rgba(255,255,255,0.5); }
+        .cover-subtitle { font-family: 'Montserrat'; letter-spacing: 3px; font-size: 0.8rem; margin-top: 10px; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 5px 0; }
+        
+        /* EDITORIAL */
+        .drop-cap { float: left; font-size: 3.5rem; line-height: 0.8; font-family: 'Cinzel Decorative'; margin-right: 10px; color: var(--gold); }
+        
+        /* PHOTO PAGES */
+        .photo-frame { padding: 10px; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transform: rotate(-2deg); margin-bottom: 20px; }
+        
+        /* INSTRUCTION */
+        .instruction {
+            position: absolute; bottom: -50px; width: 100%; text-align: center;
+            color: rgba(255,255,255,0.5); font-family: 'Montserrat'; font-size: 0.8rem;
+            animation: bounce 2s infinite;
         }
-        .signature {
-            font-family: 'Cinzel Decorative', serif; font-size: 2.5rem; margin-top: 30px; color: var(--accent-gold);
-        }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .masthead h1 { font-size: 20vw; }
-            .headlines { flex-direction: column; align-items: flex-start; }
-            .meta-details { display: none; }
-            .main-headline h2 { font-size: 2.5rem; }
-            .editorial-layout { grid-template-columns: 1fr; gap: 40px;}
-            .editorial-img-frame { order: -1; margin-bottom: 30px; } /* Foto di atas teks di HP */
-            .gallery-grid { grid-template-columns: 1fr; }
-            .gallery-item { height: 450px; }
+        /* Mobile Adjustment */
+        @media (max-width: 600px) {
+            :root { --page-width: 90vw; --page-height: 130vw; }
         }
-
     </style>
 </head>
 <body>
-
-    <div class="paper-overlay"></div>
-
-    <div id="loader">
-        <div class="loader-text">FINALIZING ISSUE...</div>
-    </div>
 
     <audio id="bgm" loop>
         <source src="lagu_jazz_piano.mp3" type="audio/mpeg">
     </audio>
 
-    <section class="cover-section">
-        <div class="cover-bg-container">
-            <div class="cover-bg" id="parallax-bg"></div>
-            <div class="cover-overlay"></div>
-        </div>
+    <div class="book">
         
-        <div class="masthead">
-            <div class="masthead-sub">THE HOMECOMING ISSUE • VOL. 26</div>
-            <h1>TETEH</h1>
-        </div>
-
-        <div class="headlines">
-            <div class="reveal-text">
-                <div class="main-headline">
-                    <h2>THE ICON<br>RETURNS.</h2>
-                </div>
-                <div class="sub-headline">
-                    Dari Okayama ke Indonesia. Sebuah cerita eksklusif tentang rindu, jarak, dan jalan pulang. Happy Birthday.
+        <div class="page" id="p1">
+            <div class="front page-content" style="background: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop') center/cover;">
+                <div style="position:absolute; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.3);"></div>
+                
+                <div style="position:relative; z-index:2; text-align: center; margin-top: 50px;">
+                    <div class="cover-subtitle">THE HOMECOMING ISSUE</div>
+                    <h1 class="cover-title">TETEH</h1>
+                    <div style="position: absolute; bottom: -300px; width: 100%; color: #000; font-family: 'Montserrat'; font-weight: bold;">
+                        THE ICON RETURNS<br>FEB 2026
+                    </div>
                 </div>
             </div>
-
-            <div class="meta-details reveal-text">
-                <div style="color: var(--accent-gold);">PRICE: PRICELESS</div>
-                <div>FEB 2026 EDITION</div>
-                <div class="barcode"></div>
-            </div>
-        </div>
-    </section>
-
-    <section class="content-section">
-        <div class="editorial-layout">
-            <div class="text-col">
-                <h3 class="reveal-text" style="font-size: 1rem; font-family: 'Montserrat'; letter-spacing: 3px; color: var(--accent-gold); margin-bottom: 20px;">EDITOR'S LETTER</h3>
-                <h2 class="reveal-text" style="font-size: 3rem; margin-bottom: 30px; color: var(--text-main);">More Than<br>Just a Sister.</h2>
-                <div class="reveal-text">
-                    <p>
-                        <span class="drop-cap">D</span>i dunia yang serba cepat ini, kemewahan sejati bukanlah barang *branded* atau tiket *first class*, melainkan momen "pulang". 
-                        Teteh telah mengajarkan kami bahwa sejauh apapun kaki melangkah (bahkan sampai ke Jepang), hati tidak pernah salah alamat.
-                    </p>
-                    <p>
-                        Ulang tahun kali ini mungkin dirayakan di seberang lautan, tapi gaungnya terdengar sampai ke meja makan kami di rumah.
-                        Majalah ini didedikasikan untuk *our main character* yang sedang menyelesaikan *season* terakhirnya di negeri orang.
-                    </p>
+            <div class="back page-content page-center" style="background: #222; color: #f4f1ea;">
+                <div>
+                    <h2 style="color: var(--gold); font-family: 'Cinzel Decorative';">EDITOR'S NOTE</h2>
+                    <p style="color: #ccc; font-style: italic;">"Majalah ini didedikasikan untuk kakak terhebat yang sedang ditunggu kepulangannya."</p>
+                    <div style="margin-top: 20px; border: 1px solid var(--gold); padding: 10px;">
+                        Tap kanan untuk lanjut baca >>
+                    </div>
                 </div>
             </div>
-            <div class="img-col reveal-text editorial-img-frame">
-                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop" style="width: 100%; display: block;">
-                <div style="margin-top: 15px; font-family: 'Montserrat'; font-size: 0.7rem; text-align: right; color: var(--text-muted);">PHOTOGRAPHED BY MEMORIES</div>
+        </div>
+
+        <div class="page" id="p2">
+            <div class="front page-content">
+                <h2 style="font-family: 'Cinzel Decorative'; font-size: 1.8rem; border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-bottom: 20px;">The Journey Home</h2>
+                <p>
+                    <span class="drop-cap">S</span>ejauh apapun Teteh pergi ke Okayama, rumah tetap jadi tujuan akhir. 
+                    Jarak 5.400 km itu cuma angka.
+                </p>
+                <p>
+                    Ulang tahun kali ini spesial. Bukan karena pestanya, tapi karena ini adalah tanda kalau sebentar lagi kita kumpul full team lagi.
+                </p>
+                <div class="photo-frame" style="transform: rotate(2deg); margin-top: 30px;">
+                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop" style="width: 100%;">
+                </div>
+            </div>
+            <div class="back page-content page-center">
+                <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=1887&auto=format&fit=crop" class="img-fill">
+                <div style="position: absolute; bottom: 20px; background: white; padding: 5px 15px; font-family: 'Montserrat'; font-size: 0.7rem;">
+                    STYLE ARCHIVE: 2026
+                </div>
             </div>
         </div>
 
-        <div class="pull-quote reveal-text">
-            "Rumah bukan hanya tempat, tapi perasaan saat kita bersama."
-        </div>
-    </section>
-
-    <section class="gallery-section">
-        <div class="gallery-title reveal-text">
-            <h2 style="font-size: 2.5rem; color: var(--text-main);">THE ARCHIVE</h2>
-            <div style="font-family: 'Montserrat'; letter-spacing: 2px; font-size: 0.8rem; margin-top: 10px; color: var(--accent-gold);">CURATED MOMENTS</div>
-        </div>
-
-        <div class="gallery-grid">
-            <div class="gallery-item reveal-text">
-                <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1920&auto=format&fit=crop">
-                <div class="caption-overlay">THE "JAPAN" CHAPTER</div>
+        <div class="page" id="p3">
+            <div class="front page-content">
+                <h2 style="text-align: center; font-family: 'Cinzel Decorative';">Birthday Wishlist</h2>
+                <ul style="list-style: none; padding: 0; margin-top: 30px; font-family: 'Montserrat';">
+                    <li style="margin-bottom: 15px; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">
+                        ☑ Sehat Selalu
+                    </li>
+                    <li style="margin-bottom: 15px; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">
+                        ☑ Rezeki Lancar
+                    </li>
+                    <li style="margin-bottom: 15px; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">
+                        ☑ Pulang dengan Selamat
+                    </li>
+                    <li style="margin-bottom: 15px; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">
+                        ☑ Traktir Adik (Wajib)
+                    </li>
+                </ul>
+                <div style="text-align: center; margin-top: 50px;">
+                    <h1 style="font-size: 3rem;">HBD!</h1>
+                </div>
             </div>
-            <div class="gallery-item reveal-text" style="transition-delay: 0.2s;">
-                <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=1887&auto=format&fit=crop">
-                <div class="caption-overlay">TIMELESS STYLE</div>
-            </div>
-            <div class="gallery-item reveal-text" style="transition-delay: 0.4s;">
-                <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=2073&auto=format&fit=crop">
-                <div class="caption-overlay">READY TO COME HOME</div>
+            <div class="back page-content page-center" style="background: #1a1a1a; color: white;">
+                <div>
+                    <h2 style="color: var(--gold);">THE END</h2>
+                    <p>See you soon at home, Teh.</p>
+                    <div style="font-size: 3rem; margin-top: 20px;">❤</div>
+                    <button onclick="closeBook()" style="margin-top: 30px; padding: 10px 20px; background: var(--gold); border: none; font-family: 'Montserrat'; cursor: pointer;">Tutup Majalah</button>
+                </div>
             </div>
         </div>
-    </section>
 
-    <footer class="footer-note">
-        <p style="color: #888; font-size: 0.9rem; font-family: 'Montserrat'; margin-bottom: 0;">DRAFTED IN INDONESIA • SENT WITH LOVE TO OKAYAMA</p>
-        <div class="signature">Happy Birthday, Teh.</div>
-        <div style="margin-top: 40px;">
-            <button onclick="document.getElementById('bgm').play()" style="background: transparent; border: 1px solid var(--accent-gold); color: var(--accent-gold); padding: 12px 25px; font-family: 'Montserrat'; cursor: pointer; letter-spacing: 2px; transition: all 0.3s;">
-                ▶ PLAY ATMOSPHERE
-            </button>
-        </div>
-    </footer>
+    </div>
+
+    <div class="instruction">Klik halaman untuk membalik majalah</div>
 
     <script>
-        // 1. LOADING SCREEN REMOVER
-        window.addEventListener('load', () => {
+        // LOGIC FLIPBOOK SEDERHANA
+        const p1 = document.getElementById("p1");
+        const p2 = document.getElementById("p2");
+        const p3 = document.getElementById("p3");
+        
+        // Audio control
+        const bgm = document.getElementById("bgm");
+        let audioStarted = false;
+
+        // Fungsi flip
+        p1.addEventListener("click", function() {
+            p1.classList.add("flipped");
+            p1.style.zIndex = 1; // Turunin z-index biar halaman berikutnya nongol
+            if(!audioStarted) { bgm.play(); audioStarted = true; }
+        });
+
+        p2.addEventListener("click", function() {
+            p2.classList.add("flipped");
+            p2.style.zIndex = 2;
+        });
+
+        p3.addEventListener("click", function() {
+            p3.classList.add("flipped");
+            p3.style.zIndex = 3;
+        });
+
+        // Fungsi tutup buku (Reset)
+        function closeBook() {
+            p3.classList.remove("flipped");
+            setTimeout(() => { p3.style.zIndex = 3; }, 500);
+            
             setTimeout(() => {
-                const loader = document.getElementById('loader');
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                    revealOnScroll(); 
-                }, 1000);
-            }, 1500);
-        });
+                p2.classList.remove("flipped");
+                setTimeout(() => { p2.style.zIndex = 4; }, 500);
+            }, 200);
 
-        // 2. PARALLAX EFFECT (COVER)
-        window.addEventListener('scroll', () => {
-            const scroll = window.scrollY;
-            const bg = document.getElementById('parallax-bg');
-            if(scroll < window.innerHeight) {
-                bg.style.transform = `translateY(${scroll * 0.5}px) scale(1.1)`;
-            }
-        });
-
-        // 3. SMOOTH REVEAL ON SCROLL
-        const revealElements = document.querySelectorAll('.reveal-text');
-        function revealOnScroll() {
-            const triggerBottom = window.innerHeight * 0.85;
-            revealElements.forEach(el => {
-                const boxTop = el.getBoundingClientRect().top;
-                if(boxTop < triggerBottom) {
-                    el.classList.add('active');
-                }
-            });
+            setTimeout(() => {
+                p1.classList.remove("flipped");
+                setTimeout(() => { p1.style.zIndex = 5; }, 500);
+            }, 400);
         }
-        window.addEventListener('scroll', revealOnScroll);
     </script>
 </body>
 </html>
