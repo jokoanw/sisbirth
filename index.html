@@ -23,6 +23,7 @@
             font-family: 'Montserrat', sans-serif;
             overflow: hidden; 
             color: white;
+            user-select: none; /* Biar teks gak keblok pas nge-drag */
         }
 
         /* Noise Overlay */
@@ -143,17 +144,16 @@
             font-size: 0.95rem; line-height: 1.7; color: #ccc; text-align: justify;
         }
         
-        /* Quote Style */
         .quote-content {
             text-align: center; padding: 20px; font-family: 'Nothing You Could Do', cursive;
             font-size: 1.8rem; color: white; line-height: 1.4;
         }
 
-        /* --- SPOTIFY WIDGET (INTERACTIVE) --- */
+        /* --- SPOTIFY WIDGET (DRAGGABLE) --- */
         .spotify-widget {
             position: fixed; top: 30px; right: 30px;
             background: rgba(24, 24, 24, 0.95); backdrop-filter: blur(10px);
-            width: 320px; height: 90px; /* Sedikit lebih tinggi buat timer */
+            width: 320px; height: 90px;
             border-radius: 12px; display: flex; align-items: center; padding: 0 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1000;
             border: 1px solid #333; transition: all 0.3s;
@@ -162,7 +162,7 @@
         .album-cover {
             width: 50px; height: 50px; border-radius: 4px; margin-right: 15px;
             background: #333; overflow: hidden; flex-shrink: 0;
-            position: relative; top: -5px; /* Adjust layout */
+            position: relative; top: -5px;
         }
         .album-cover img { width: 100%; height: 100%; object-fit: cover; }
         .playing .album-cover img { animation: spin 4s linear infinite; border-radius: 50%; }
@@ -201,35 +201,44 @@
         }
         .play-btn:hover { transform: scale(1.1); background: #1ed760; }
         
-        /* INTERACTIVE PROGRESS BAR */
+        /* PROGRESS BAR AREA */
         .progress-wrapper {
             position: absolute; bottom: 8px; left: 15px; width: calc(100% - 30px);
             display: flex; flex-direction: column;
+            /* Perbesar area hit biar gampang diklik/drag */
+            padding: 5px 0; 
+            cursor: pointer;
         }
 
         .progress-container {
             width: 100%; height: 4px; background: #535353; border-radius: 2px;
-            cursor: pointer; position: relative;
+            position: relative; pointer-events: none; /* Wrapper yang handle event */
         }
         
-        .progress-container:hover { height: 6px; } /* Efek hover Spotify */
+        .progress-wrapper:hover .progress-container { height: 6px; }
 
         .progress-bar {
             height: 100%; background: #1db954; width: 0%; border-radius: 2px;
-            position: relative;
+            position: relative; pointer-events: none;
         }
         
-        /* Bulatan di ujung bar */
+        /* Bulatan Slider */
         .progress-bar::after {
-            content: ''; position: absolute; right: -4px; top: 50%; transform: translateY(-50%);
-            width: 8px; height: 8px; background: white; border-radius: 50%; opacity: 0;
+            content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%);
+            width: 12px; height: 12px; background: white; border-radius: 50%; 
+            opacity: 0; transition: opacity 0.2s;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
-        .progress-container:hover .progress-bar::after { opacity: 1; }
+        
+        .progress-wrapper:hover .progress-bar::after { opacity: 1; }
+        /* Saat di-drag bulatan tetap muncul */
+        .progress-wrapper.dragging .progress-bar::after { opacity: 1; transform: translateY(-50%) scale(1.2); }
+        .progress-wrapper.dragging .progress-container { height: 6px; }
 
-        /* Waktu Lagu */
         .time-info {
             display: flex; justify-content: space-between; width: 100%;
             font-size: 0.6rem; color: #b3b3b3; margin-top: 3px; font-family: sans-serif;
+            pointer-events: none;
         }
 
     </style>
@@ -260,8 +269,8 @@
             </button>
         </div>
         
-        <div class="progress-wrapper">
-            <div class="progress-container" id="progressContainer">
+        <div class="progress-wrapper" id="progressWrapper">
+            <div class="progress-container">
                 <div class="progress-bar" id="progressBar"></div>
             </div>
             <div class="time-info">
@@ -400,12 +409,10 @@
     </div>
 
     <script>
+        // DRAG SCROLL GALLERY
         const slider = document.getElementById('gallery');
-        let isDown = false;
-        let startX;
-        let scrollLeft;
+        let isDown = false; let startX; let scrollLeft;
 
-        // DRAG SCROLL
         slider.addEventListener('mousedown', (e) => {
             isDown = true; slider.style.cursor = 'grabbing';
             startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft;
@@ -413,8 +420,7 @@
         slider.addEventListener('mouseleave', () => { isDown = false; slider.style.cursor = 'grab'; });
         slider.addEventListener('mouseup', () => { isDown = false; slider.style.cursor = 'grab'; });
         slider.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
+            if (!isDown) return; e.preventDefault();
             const x = e.pageX - slider.offsetLeft;
             const walk = (x - startX) * 2;
             slider.scrollLeft = scrollLeft - walk;
@@ -426,52 +432,94 @@
         const playIcon = document.getElementById('playIcon');
         const widget = document.getElementById('spotifyWidget');
         const progressBar = document.getElementById('progressBar');
-        const progressContainer = document.getElementById('progressContainer');
+        const progressWrapper = document.getElementById('progressWrapper'); // Area hit yang lebih besar
         const currTimeText = document.getElementById('currentTime');
         const durTimeText = document.getElementById('durationTime');
         
         function toggleAudio() {
             if (bgm.paused) {
                 bgm.play();
-                playIcon.classList.remove('fa-play');
-                playIcon.classList.add('fa-pause');
-                widget.classList.remove('paused-anim');
-                widget.classList.add('playing');
+                playIcon.classList.remove('fa-play'); playIcon.classList.add('fa-pause');
+                widget.classList.remove('paused-anim'); widget.classList.add('playing');
             } else {
                 bgm.pause();
-                playIcon.classList.remove('fa-pause');
-                playIcon.classList.add('fa-play');
-                widget.classList.add('paused-anim');
-                widget.classList.remove('playing');
+                playIcon.classList.remove('fa-pause'); playIcon.classList.add('fa-play');
+                widget.classList.add('paused-anim'); widget.classList.remove('playing');
             }
         }
 
-        // Update Progress Bar & Time
+        // UPDATE PROGRESS BAR VISUAL
         bgm.addEventListener('timeupdate', () => {
-            const { currentTime, duration } = bgm;
-            if (duration) {
-                const progressPercent = (currentTime / duration) * 100;
+            if(!isScrubbing && bgm.duration) { // Jangan update kalau lagi di-drag user
+                const progressPercent = (bgm.currentTime / bgm.duration) * 100;
                 progressBar.style.width = `${progressPercent}%`;
                 
-                // Format Waktu
-                currTimeText.innerText = formatTime(currentTime);
-                durTimeText.innerText = formatTime(duration);
+                currTimeText.innerText = formatTime(bgm.currentTime);
+                durTimeText.innerText = formatTime(bgm.duration);
             }
         });
 
-        // Fitur Klik/Geser Durasi (Seeking)
-        progressContainer.addEventListener('click', (e) => {
-            const width = progressContainer.clientWidth;
-            const clickX = e.offsetX;
-            const duration = bgm.duration;
+        bgm.addEventListener('loadedmetadata', () => {
+            durTimeText.innerText = formatTime(bgm.duration);
+        });
+
+        // --- SCRUBBING / DRAGGING LOGIC ---
+        let isScrubbing = false;
+
+        function updateScrub(e) {
+            const rect = progressWrapper.getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            let percent = pos * 100;
             
-            if(duration) {
-                bgm.currentTime = (clickX / width) * duration;
+            // Limit 0-100%
+            if (percent < 0) percent = 0;
+            if (percent > 100) percent = 100;
+            
+            progressBar.style.width = `${percent}%`;
+            
+            // Update waktu teks real-time saat geser
+            if(bgm.duration) {
+                currTimeText.innerText = formatTime(bgm.duration * pos);
+            }
+            return pos; // Return posisi 0-1
+        }
+
+        // Event: Tekan Mouse
+        progressWrapper.addEventListener('mousedown', (e) => {
+            isScrubbing = true;
+            progressWrapper.classList.add('dragging');
+            updateScrub(e); // Update visual langsung saat diklik
+        });
+
+        // Event: Geser Mouse (di seluruh dokumen biar gak lepas)
+        document.addEventListener('mousemove', (e) => {
+            if (isScrubbing) {
+                e.preventDefault(); // Mencegah highlight teks
+                updateScrub(e);
+            }
+        });
+
+        // Event: Lepas Mouse
+        document.addEventListener('mouseup', (e) => {
+            if (isScrubbing) {
+                isScrubbing = false;
+                progressWrapper.classList.remove('dragging');
+                
+                // Set waktu lagu sesungguhnya pas dilepas
+                const rect = progressWrapper.getBoundingClientRect();
+                const pos = (e.clientX - rect.left) / rect.width;
+                if(bgm.duration) {
+                    let newTime = bgm.duration * pos;
+                    if(newTime < 0) newTime = 0;
+                    if(newTime > bgm.duration) newTime = bgm.duration;
+                    bgm.currentTime = newTime;
+                }
             }
         });
 
         // Helper Format Waktu (mm:ss)
         function formatTime(time) {
+            if(isNaN(time)) return "0:00";
             const min = Math.floor(time / 60);
             const sec = Math.floor(time % 60);
             return `${min}:${sec < 10 ? '0' + sec : sec}`;
