@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Film by Afdhi: For Teteh</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;600&family=Nothing+You+Could+Do&display=swap" rel="stylesheet">
+    <title>For Teteh: Terbuang Dalam Waktu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;600;700&family=Nothing+You+Could+Do&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
         :root {
-            /* Warna Kodak Authentic */
             --kodak-yellow: #ffc20e; 
             --kodak-red: #ee1c25;
             --film-bg: #101010;
-            --frame-border: #1a1a1a;
             
-            /* Dimensi */
+            /* Dimensi Film */
             --film-height: 420px;
         }
 
@@ -28,7 +27,7 @@
             color: white;
         }
 
-        /* Noise Overlay (Efek Butiran Film) */
+        /* Noise Overlay */
         .grain-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 999; opacity: 0.05;
@@ -38,182 +37,221 @@
         /* --- SCROLL CONTAINER --- */
         .gallery-wrapper {
             width: 100%; height: 100%;
-            overflow-x: auto;
-            overflow-y: hidden;
+            overflow-x: auto; overflow-y: hidden;
             display: flex; align-items: center;
-            scrollbar-width: none; /* Firefox */
-            cursor: grab;
+            scrollbar-width: none; cursor: grab;
         }
-        .gallery-wrapper::-webkit-scrollbar { display: none; } /* Chrome */
+        .gallery-wrapper::-webkit-scrollbar { display: none; }
 
-        /* --- 1. KODAK CANISTER (3D EFFECT) --- */
+        /* --- 1. KODAK CANISTER (FIXED LAYOUT) --- */
         .canister-section {
             flex-shrink: 0; width: 350px; height: 100%;
             display: flex; align-items: center; justify-content: center;
             position: relative; z-index: 10;
-            background: #050505; /* Nutupin film pas di-scroll balik */
+            background: #050505;
             box-shadow: 20px 0 50px rgba(0,0,0,1);
         }
 
         .canister-body {
-            width: 160px; height: 340px;
-            /* Gradient biar kelihatan bulat 3D */
-            background: linear-gradient(90deg, #333 0%, #b8860b 15%, var(--kodak-yellow) 30%, var(--kodak-yellow) 70%, #b8860b 85%, #333 100%);
-            border-radius: 10px;
+            width: 170px; height: 320px;
+            /* Gradient Metalik Kuning */
+            background: linear-gradient(90deg, #444 0%, #b8860b 10%, var(--kodak-yellow) 25%, var(--kodak-yellow) 75%, #b8860b 90%, #444 100%);
+            border-radius: 12px;
             position: relative;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             border: 2px solid #222;
         }
 
+        /* Tutup Atas Bawah */
         .canister-cap {
-            position: absolute; width: 110%; height: 25px; background: #444;
-            border-radius: 4px;
-            background: linear-gradient(90deg, #222, #777, #222);
+            position: absolute; width: 106%; height: 30px; background: #333;
+            border-radius: 6px;
+            background: linear-gradient(90deg, #111, #555, #111);
             box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+            z-index: 2;
         }
-        .cap-top { top: -15px; }
-        .cap-bottom { bottom: -15px; }
+        .cap-top { top: -20px; }
+        .cap-bottom { bottom: -20px; }
 
-        .logo-vertical {
+        /* LOGO VERTIKAL (Tanpa Tabrakan) */
+        .brand-area {
+            height: 70%; display: flex; align-items: center; justify-content: center;
             transform: rotate(-90deg);
-            font-family: 'Bebas Neue'; font-size: 3.5rem; color: var(--kodak-red);
-            letter-spacing: 2px; text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
-            white-space: nowrap;
         }
+        .logo-text {
+            font-family: 'Bebas Neue'; font-size: 3.8rem; color: var(--kodak-red);
+            letter-spacing: 2px; text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
+            white-space: nowrap; margin: 0;
+        }
+
+        /* DETAIL ISO (Horizontal di Bawah) */
+        .iso-area {
+            position: absolute; bottom: 20px; width: 100%;
+            text-align: center; color: #000;
+        }
+        .iso-text { font-weight: 800; font-size: 1.2rem; letter-spacing: 1px; line-height: 1; }
+        .exp-text { font-size: 0.7rem; font-weight: 600; letter-spacing: 2px; margin-top: 5px; opacity: 0.8; }
 
         .film-lip {
-            position: absolute; right: -20px; top: 10%; height: 80%; width: 30px;
+            position: absolute; right: -20px; top: 10%; height: 80%; width: 40px;
             background: #151515; z-index: -1;
         }
 
-        /* --- 2. FILM STRIP (LONG) --- */
+        /* --- 2. FILM STRIP --- */
         .film-strip {
-            display: flex;
-            height: var(--film-height);
-            background-color: #151515;
-            padding: 0 80px; /* Leader film di awal */
-            align-items: center;
-            position: relative;
+            display: flex; height: var(--film-height);
+            background-color: #151515; padding: 0 80px;
+            align-items: center; position: relative;
         }
-
-        /* LUBANG FILM (PERFORATION) - ATAS BAWAH */
+        /* Perforasi Film */
         .perforation-top, .perforation-bottom {
             position: absolute; left: 0; width: 100%; height: 25px;
-            /* Pola lubang kotak */
             background-image: linear-gradient(to right, #fff 40%, transparent 40%);
-            background-size: 25px 100%; /* Jarak antar lubang */
-            opacity: 0.7;
-            pointer-events: none;
+            background-size: 25px 100%; opacity: 0.7; pointer-events: none;
         }
         .perforation-top { top: 15px; }
         .perforation-bottom { bottom: 15px; }
 
-        /* --- 3. CONTENT FRAMES --- */
+        /* --- 3. FRAMES --- */
         .frame {
-            flex-shrink: 0;
-            width: 500px; /* Lebar Frame */
-            height: 300px; /* Tinggi Frame */
-            margin-right: 40px; /* Jarak antar frame */
-            background: #000;
-            border: 4px solid #222;
-            position: relative;
-            overflow: hidden;
+            flex-shrink: 0; width: 500px; height: 300px; margin-right: 40px;
+            background: #000; border: 4px solid #222;
+            position: relative; overflow: hidden;
             display: flex; justify-content: center; align-items: center;
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
 
-        /* FRAME NOMOR */
         .frame-meta {
             position: absolute; bottom: -45px; right: 10px;
-            font-family: 'Bebas Neue'; color: #555; font-size: 1.2rem; letter-spacing: 1px;
+            font-family: 'Bebas Neue'; color: #555; font-size: 1.2rem;
         }
         .frame-meta span { color: var(--kodak-yellow); margin-right: 5px; }
 
-        /* TYPE: PHOTO */
+        /* Foto Style */
         .frame img {
             width: 100%; height: 100%; object-fit: cover;
-            /* Efek Foto Film Jadul */
-            filter: sepia(15%) contrast(1.1) saturate(0.9);
-            transition: transform 0.5s;
+            filter: sepia(10%) contrast(1.1) saturate(0.9); transition: transform 0.5s;
         }
         .frame:hover img { transform: scale(1.03); filter: sepia(0%); }
 
-        /* TYPE: TEXT (SURAT) */
+        /* Text Style */
         .text-content {
-            padding: 40px;
-            width: 100%; height: 100%; box-sizing: border-box;
-            background: #080808;
-            display: flex; flex-direction: column; justify-content: center;
+            padding: 40px; width: 100%; height: 100%; box-sizing: border-box;
+            background: #080808; display: flex; flex-direction: column; justify-content: center;
         }
-        
         .text-title {
             font-family: 'Bebas Neue'; font-size: 2.2rem; color: var(--kodak-yellow);
             border-bottom: 2px solid #333; margin-bottom: 15px; padding-bottom: 5px;
         }
-        
         .text-body {
-            font-size: 0.95rem; line-height: 1.7; color: #ccc;
-            text-align: justify;
+            font-size: 0.95rem; line-height: 1.7; color: #ccc; text-align: justify;
         }
 
-        /* TYPE: QUOTE (IMPACT) */
+        /* Quote Style */
         .quote-content {
-            text-align: center; padding: 20px;
-            font-family: 'Nothing You Could Do', cursive;
-            font-size: 1.8rem; color: white;
-            line-height: 1.4;
+            text-align: center; padding: 20px; font-family: 'Nothing You Could Do', cursive;
+            font-size: 1.8rem; color: white; line-height: 1.4;
         }
 
-        /* --- UI CONTROLS --- */
-        .hint {
+        /* --- SPOTIFY PLAYER BAR (NEW) --- */
+        .spotify-widget {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            color: rgba(255,255,255,0.3); font-size: 0.8rem; letter-spacing: 2px;
-            animation: blink 2s infinite; z-index: 100; pointer-events: none;
-        }
-        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.8; } }
-
-        .audio-control {
-            position: fixed; top: 30px; right: 30px; z-index: 100;
-            background: transparent; border: 1px solid var(--kodak-yellow);
-            color: var(--kodak-yellow); padding: 8px 15px; cursor: pointer;
-            font-family: 'Bebas Neue'; letter-spacing: 1px; font-size: 1.2rem;
+            background: #181818; width: 320px; height: 80px;
+            border-radius: 15px; display: flex; align-items: center; padding: 0 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1000;
+            border: 1px solid #333;
             transition: all 0.3s;
         }
-        .audio-control:hover { background: var(--kodak-yellow); color: black; }
+        
+        .album-cover {
+            width: 50px; height: 50px; border-radius: 5px; margin-right: 15px;
+            background: #333; overflow: hidden; position: relative;
+        }
+        .album-cover img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Animasi piringan hitam muter kalau play */
+        .playing .album-cover img { animation: spin 4s linear infinite; border-radius: 50%; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* FILM END */
-        .film-tail {
-            width: 150px; height: var(--film-height);
-            background: linear-gradient(to right, #151515, transparent);
-            position: relative;
+        .track-info { flex: 1; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+        .track-title {
+            font-weight: 700; font-size: 0.9rem; color: white; margin-bottom: 4px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .film-tail::after {
-            content: 'END OF ROLL';
-            position: absolute; top: 50%; left: 20px; transform: translateY(-50%) rotate(-90deg);
-            font-family: 'Bebas Neue'; color: #333; font-size: 2rem;
+        .artist-name { font-size: 0.75rem; color: #b3b3b3; }
+
+        .player-controls { display: flex; gap: 15px; align-items: center; }
+        .control-btn {
+            background: transparent; border: none; color: #b3b3b3; font-size: 1.2rem; cursor: pointer;
         }
+        .play-btn {
+            width: 35px; height: 35px; border-radius: 50%; background: white; color: black;
+            display: flex; justify-content: center; align-items: center; font-size: 1rem;
+            transition: transform 0.2s;
+        }
+        .play-btn:hover { transform: scale(1.1); }
+        .control-btn:hover { color: white; }
+
+        /* Progress Bar Kecil */
+        .progress-container {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 3px;
+            background: #444; border-radius: 0 0 15px 15px; overflow: hidden;
+        }
+        .progress-bar {
+            width: 0%; height: 100%; background: #1db954; /* Spotify Green */
+            transition: width 0.5s linear;
+        }
+
     </style>
 </head>
 <body>
 
     <div class="grain-overlay"></div>
-    
-    <button class="audio-control" onclick="toggleAudio()">PLAY MUSIC</button>
+
     <audio id="bgm" loop>
-        <source src="lagu_nostalgia.mp3" type="audio/mpeg">
+        <source src="terbuang_dalam_waktu.mp3" type="audio/mpeg">
     </audio>
 
-    <div class="hint"><< SCROLL / DRAG / GESER >></div>
+    <div class="spotify-widget" id="spotifyWidget">
+        <div class="album-cover">
+            <img src="https://i.scdn.co/image/ab67616d0000b273413867623190445d070a2410" alt="Album Art">
+        </div>
+        <div class="track-info">
+            <div class="track-title">Terbuang dalam Waktu</div>
+            <div class="artist-name">Barasuara</div>
+        </div>
+        <div class="player-controls">
+            <button class="control-btn"><i class="fas fa-step-backward"></i></button>
+            <button class="play-btn" onclick="toggleAudio()">
+                <i class="fas fa-play" id="playIcon"></i>
+            </button>
+            <button class="control-btn"><i class="fas fa-step-forward"></i></button>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+
+    <div style="position: fixed; bottom: 120px; width: 100%; text-align: center; color: rgba(255,255,255,0.3); font-size: 0.8rem; letter-spacing: 2px; pointer-events: none;">
+        << SCROLL UNTUK MEMBUKA FILM >>
+    </div>
 
     <div class="gallery-wrapper" id="gallery">
 
         <div class="canister-section">
             <div class="canister-body">
                 <div class="canister-cap cap-top"></div>
-                <div class="logo-vertical">KODAK PORTRA</div>
+                
+                <div class="brand-area">
+                    <h1 class="logo-text">KODAK PORTRA</h1>
+                </div>
+                <div class="iso-area">
+                    <div class="iso-text">400</div>
+                    <div class="exp-text">36 EXP</div>
+                </div>
+
                 <div class="film-lip"></div>
                 <div class="canister-cap cap-bottom"></div>
-                <div style="position: absolute; bottom: 60px; font-weight: bold; color: black; font-size: 0.7rem; transform: rotate(-90deg);">ISO 400</div>
             </div>
         </div>
 
@@ -253,7 +291,7 @@
                 <div class="text-content">
                     <div class="text-title">Scene 2: Rumah</div>
                     <div class="text-body">
-                        "Rumah tanpamu tuh kayak film tanpa suara. Sepi. Ibu masak enak, Ayah nonton TV, aku main game, tapi ada satu kursi kosong yang nungguin pemiliknya pulang. Kucing di rumah juga makin gembul, siap dipeluk."
+                        "Rumah beneran sepi ga ada Teteh. Ibu masak enak, Ayah nonton TV, aku main game, tapi ada satu kursi kosong yang nungguin pemiliknya pulang. Kucing di rumah juga makin gembul, siap dipeluk."
                     </div>
                 </div>
                 <div class="frame-meta"><span>5</span>A</div>
@@ -286,7 +324,7 @@
                 <div class="frame-meta"><span>9</span>A</div>
             </div>
 
-            <div class="frame">
+             <div class="frame">
                 <div class="text-content">
                     <div class="text-title">Final Cut</div>
                     <div class="text-body">
@@ -310,7 +348,7 @@
                 <div class="frame-meta"><span>12</span>A</div>
             </div>
 
-            <div class="film-tail"></div>
+            <div style="width: 150px; height: 100%; background: linear-gradient(to right, #151515, transparent);"></div>
         </div>
     </div>
 
@@ -320,12 +358,10 @@
         let startX;
         let scrollLeft;
 
-        // FITUR 1: DRAG SCROLL (KLIK & TARIK)
+        // DRAG SCROLL
         slider.addEventListener('mousedown', (e) => {
-            isDown = true;
-            slider.style.cursor = 'grabbing';
-            startX = e.pageX - slider.offsetLeft;
-            scrollLeft = slider.scrollLeft;
+            isDown = true; slider.style.cursor = 'grabbing';
+            startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft;
         });
         slider.addEventListener('mouseleave', () => { isDown = false; slider.style.cursor = 'grab'; });
         slider.addEventListener('mouseup', () => { isDown = false; slider.style.cursor = 'grab'; });
@@ -333,26 +369,43 @@
             if (!isDown) return;
             e.preventDefault();
             const x = e.pageX - slider.offsetLeft;
-            const walk = (x - startX) * 2; // Kecepatan Drag
+            const walk = (x - startX) * 2;
             slider.scrollLeft = scrollLeft - walk;
         });
 
-        // FITUR 2: MOUSE WHEEL SCROLL (BIAR DI LAPTOP ENAK)
-        // Mengubah scroll atas-bawah mouse jadi kiri-kanan
+        // WHEEL SCROLL
         slider.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            slider.scrollLeft += e.deltaY;
+            e.preventDefault(); slider.scrollLeft += e.deltaY;
         });
 
-        // FITUR 3: AUDIO
+        // AUDIO & SPOTIFY BAR LOGIC
         const bgm = document.getElementById('bgm');
+        const playIcon = document.getElementById('playIcon');
+        const widget = document.getElementById('spotifyWidget');
+        const progressBar = document.getElementById('progressBar');
+        
         function toggleAudio() {
             if (bgm.paused) {
                 bgm.play();
-                document.querySelector('.audio-control').innerText = "PAUSE MUSIC";
+                playIcon.classList.remove('fa-play');
+                playIcon.classList.add('fa-pause');
+                widget.classList.add('playing');
+                updateProgress();
             } else {
                 bgm.pause();
-                document.querySelector('.audio-control').innerText = "PLAY MUSIC";
+                playIcon.classList.remove('fa-pause');
+                playIcon.classList.add('fa-play');
+                widget.classList.remove('playing');
+            }
+        }
+
+        // Fake Progress Bar Animation
+        function updateProgress() {
+            if(bgm.paused) return;
+            const percentage = (bgm.currentTime / bgm.duration) * 100;
+            progressBar.style.width = percentage + '%';
+            if(percentage < 100) {
+                requestAnimationFrame(updateProgress);
             }
         }
     </script>
