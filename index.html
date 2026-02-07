@@ -3,215 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TETEH Magazine: The Icon Issue</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>TETEH: The Platinum Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
     
     <style>
-        /* --- SETUP FASHION --- */
+        /* --- 1. RESET & VARIABLES --- */
         :root {
-            --bg: #ffffff;
-            --text: #1a1a1a;
-            --accent: #c49f6a; /* Gold/Beige mahal */
+            --bg-color: #fcfcfc;
+            --text-main: #111111;
+            --text-muted: #555555;
+            --accent-gold: #D4AF37; /* Emas yang tidak norak */
+            --transition: cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         body {
             margin: 0; padding: 0;
-            background: var(--bg); color: var(--text);
-            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Cormorant Garamond', serif; /* Font bacaan enak */
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        h1, h2, h3 { font-family: 'Cinzel Decorative', serif; text-transform: uppercase; margin: 0; }
-        img { display: block; width: 100%; height: auto; }
-
-        /* --- ANIMASI SCROLL REVEAL (Biar ga flat) --- */
-        .reveal { opacity: 0; transform: translateY(50px); transition: all 1s cubic-bezier(0.19, 1, 0.22, 1); }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-
-        /* --- SECTION 1: THE COVER (VOGUE STYLE) --- */
-        .cover-section {
-            height: 100vh;
-            position: relative;
-            overflow: hidden;
+        /* Tekstur Kertas (Noise) biar estetik */
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 999;
         }
 
-        .cover-image {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            /* GANTI FOTO COVER DI SINI (Harus Portrait HD) */
-            /* Contoh pakai foto random fashion, ganti dengan foto Teteh */
-            background-image: url('https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?q=80&w=2070&auto=format&fit=crop');
-            background-position: center top;
-            background-size: cover;
-            filter: contrast(1.1) saturate(0.9); /* Filter biar cinematic */
+        /* --- 2. LOADING SCREEN --- */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; z-index: 1000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1s ease;
         }
-
-        .masthead {
-            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-            font-size: 15vw; /* Ukuran responsif raksasa */
-            line-height: 0.8; color: white; mix-blend-mode: difference; /* Efek teks nembus foto */
-            z-index: 10; letter-spacing: -5px;
+        .loader-text {
+            font-family: 'Montserrat', sans-serif; letter-spacing: 5px; font-size: 0.8rem;
+            text-transform: uppercase; animation: pulse 1.5s infinite;
         }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
 
-        .cover-lines {
-            position: absolute; bottom: 50px; left: 30px;
-            color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
-
-        .headline-main {
-            font-size: 3.5rem; font-weight: 900; line-height: 1;
-            border-left: 5px solid var(--accent); padding-left: 20px; margin-bottom: 20px;
-        }
-
-        .headline-sub { font-size: 1.2rem; font-weight: 600; margin-bottom: 5px; }
-        .headline-desc { font-size: 0.9rem; opacity: 0.9; margin-bottom: 20px; max-width: 300px; }
-
-        /* --- SECTION 2: THE EDITORIAL SPREAD --- */
-        .spread-section {
-            padding: 100px 5%;
-            display: grid; grid-template-columns: 1fr 1fr; gap: 50px;
-            align-items: center; background: #f8f8f8;
-        }
-
-        .spread-text h2 { font-size: 3rem; margin-bottom: 30px; color: var(--text); }
-        .spread-text p {
-            font-size: 1.1rem; line-height: 1.8; margin-bottom: 20px;
-            column-count: 2; /* Teks dua kolom ala majalah */
-            column-gap: 30px;
-        }
-
-        .spread-image-container { position: relative; }
-        .spread-image {
-            width: 90%; height: 600px; object-fit: cover;
-            box-shadow: -30px 30px 0 var(--accent); /* Aksen bayangan kotak */
-        }
-        .quote-overlay {
-            position: absolute; bottom: -30px; right: 0;
-            background: var(--text); color: var(--accent);
-            padding: 30px; font-size: 1.5rem; font-family: 'Cinzel Decorative', serif;
-            max-width: 300px; text-align: right;
-        }
-
-        /* --- SECTION 3: STYLE FILE (GALLERY) --- */
-        .style-file { padding: 100px 5%; }
-        .section-title { text-align: center; font-size: 2.5rem; margin-bottom: 50px; letter-spacing: 5px; }
+        /* --- 3. TYPOGRAPHY UTILS --- */
+        h1, h2, h3 { font-family: 'Cinzel Decorative', serif; font-weight: 700; margin: 0; line-height: 1.1; }
+        p { font-size: 1.25rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 20px; }
         
-        .fashion-grid {
+        .reveal-text {
+            display: block; opacity: 0; transform: translateY(40px);
+            transition: all 1.2s var(--transition);
+        }
+        .reveal-text.active { opacity: 1; transform: translateY(0); }
+
+        /* --- 4. HERO / COVER SECTION --- */
+        .cover-section {
+            height: 100vh; position: relative; overflow: hidden;
+            display: flex; justify-content: center; align-items: flex-end;
+            padding-bottom: 50px; box-sizing: border-box;
+        }
+
+        .cover-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            /* GANTI URL FOTO TETEHMU DI SINI (Portrait HD) */
+            background-image: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop');
+            background-size: cover; background-position: center;
+            transform: scale(1.1); /* Zoom dikit buat efek parallax nanti */
+            z-index: -1;
+            filter: contrast(1.05) saturate(0.9);
+        }
+
+        /* MASTHEAD (JUDUL MAJALAH) */
+        .masthead {
+            position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+            width: 90%; text-align: center; z-index: 10;
+        }
+        .masthead h1 {
+            font-size: 13vw; color: white;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            letter-spacing: -2px; mix-blend-mode: overlay; opacity: 0.9;
+        }
+        .masthead-sub {
+            font-family: 'Montserrat', sans-serif; font-size: 0.9rem; letter-spacing: 5px; color: white;
+            text-transform: uppercase; border-top: 1px solid rgba(255,255,255,0.5); border-bottom: 1px solid rgba(255,255,255,0.5);
+            padding: 10px 0; display: inline-block; width: 100%;
+        }
+
+        /* HEADLINES KIRI BAWAH */
+        .headlines {
+            width: 90%; color: white; z-index: 5;
+            display: flex; justify-content: space-between; align-items: flex-end;
+        }
+        .main-headline h2 {
+            font-size: 4rem; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            border-left: 4px solid var(--accent-gold); padding-left: 20px;
+        }
+        .sub-headline {
+            font-family: 'Montserrat', sans-serif; font-size: 1rem; margin-top: 10px;
+            font-weight: 400; letter-spacing: 1px; max-width: 400px;
+        }
+
+        /* BARCODE DETAIL */
+        .meta-details {
+            text-align: right; font-family: 'Montserrat', sans-serif; font-size: 0.7rem; opacity: 0.8;
+        }
+        .barcode {
+            height: 40px; width: 100px; background: white; margin-top: 10px; margin-left: auto;
+            background-image: linear-gradient(90deg, #000 2px, transparent 2px, #000 4px, transparent 4px, #000 8px, transparent 8px); 
+            background-size: 10px 100%;
+        }
+
+        /* --- 5. EDITORIAL SPREAD --- */
+        .content-section {
+            padding: 120px 10%;
+            background: var(--bg-color);
+        }
+        .editorial-layout {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+        }
+        .drop-cap {
+            float: left; font-size: 6rem; line-height: 0.7; font-family: 'Cinzel Decorative', serif;
+            margin-right: 15px; color: var(--text-main);
+        }
+        
+        .pull-quote {
+            font-family: 'Cinzel Decorative', serif; font-size: 2rem;
+            color: var(--accent-gold); text-align: center; margin: 40px 0;
+            padding: 20px; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;
+        }
+
+        /* --- 6. GALLERY MASONRY --- */
+        .gallery-section {
+            padding: 0 5%; padding-bottom: 100px;
+        }
+        .gallery-title {
+            text-align: center; margin-bottom: 60px;
+        }
+        .gallery-grid {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
         }
-        .grid-item { position: relative; height: 500px; overflow: hidden; }
-        .grid-item img {
+        .gallery-item {
+            position: relative; overflow: hidden; height: 600px;
+        }
+        .gallery-item img {
             width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            transition: transform 1.5s var(--transition);
+            filter: grayscale(20%);
         }
-        .grid-item:hover img { transform: scale(1.1); }
-        
-        .grid-caption {
+        .gallery-item:hover img {
+            transform: scale(1.1); filter: grayscale(0%);
+        }
+        .caption-overlay {
             position: absolute; bottom: 20px; left: 20px;
-            color: var(--text); background: white; padding: 5px 15px;
-            font-weight: bold; letter-spacing: 2px; font-size: 0.8rem;
+            background: white; color: black; padding: 10px 20px;
+            font-family: 'Montserrat', sans-serif; font-size: 0.8rem; letter-spacing: 1px;
+            opacity: 0; transform: translateY(20px); transition: all 0.5s ease;
+        }
+        .gallery-item:hover .caption-overlay { opacity: 1; transform: translateY(0); }
+
+        /* --- 7. FOOTER --- */
+        .footer-note {
+            text-align: center; padding: 100px 20px; background: #111; color: #fff;
+        }
+        .signature {
+            font-family: 'Cinzel Decorative', serif; font-size: 2rem; margin-top: 20px; color: var(--accent-gold);
         }
 
-        /* --- FOOTER: CREDITS --- */
-        .credits {
-            text-align: center; padding: 80px 20px;
-            background: var(--text); color: white;
-        }
-        .role { color: var(--accent); font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 10px; }
-        .name { font-size: 1.5rem; font-weight: bold; }
-
-        /* --- RESPONSIVE (HP) --- */
+        /* RESPONSIVE */
         @media (max-width: 768px) {
-            .masthead { font-size: 20vw; top: 10px; }
-            .headline-main { font-size: 2.5rem; }
-            .spread-section { grid-template-columns: 1fr; }
-            .spread-text p { column-count: 1; }
-            .spread-image { height: 400px; width: 100%; }
-            .fashion-grid { grid-template-columns: 1fr; }
+            .masthead h1 { font-size: 20vw; }
+            .headlines { flex-direction: column; align-items: flex-start; }
+            .meta-details { display: none; }
+            .main-headline h2 { font-size: 2.5rem; }
+            .editorial-layout { grid-template-columns: 1fr; }
+            .gallery-grid { grid-template-columns: 1fr; }
+            .gallery-item { height: 400px; }
         }
+
     </style>
 </head>
 <body>
 
+    <div class="noise-overlay"></div>
+
+    <div id="loader">
+        <div class="loader-text">PRINTING SPECIAL ISSUE...</div>
+    </div>
+
+    <audio id="bgm" loop>
+        <source src="lagu_jazz_piano.mp3" type="audio/mpeg">
+    </audio>
+
     <section class="cover-section">
-        <h1 class="masthead">TETEH</h1>
+        <div class="cover-bg" id="parallax-bg"></div>
         
-        <div class="cover-image"></div>
-        
-        <div class="cover-lines reveal">
-            <div class="headline-main">THE<br>HOMECOMING<br>ISSUE.</div>
-            
-            <div class="headline-sub">TREND REPORT: JAPAN TO INDO</div>
-            <div class="headline-desc">Mengapa kepulangan Teteh adalah event paling ditunggu musim ini.</div>
-            
-            <div class="headline-sub" style="margin-top: 20px;">EXCLUSIVE: HBD SPECIAL</div>
-            <div class="headline-desc">Wawancara eksklusif dengan bintang utama kita di hari spesialnya.</div>
+        <div class="masthead">
+            <div class="masthead-sub">THE HOMECOMING ISSUE • VOL. 26</div>
+            <h1>TETEH</h1>
         </div>
-    </section>
 
-    <section class="spread-section">
-        <div class="spread-image-container reveal">
-            <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=1888&auto=format&fit=crop" alt="Editorial Shot" class="spread-image">
-            <div class="quote-overlay">
-                "Jarak jauh itu nggak stylish. Pulang ke rumah itu baru timeless."
+        <div class="headlines">
+            <div class="reveal-text">
+                <div class="main-headline">
+                    <h2>THE ICON<br>RETURNS.</h2>
+                </div>
+                <div class="sub-headline">
+                    Dari Okayama ke Indonesia. Sebuah cerita eksklusif tentang rindu, jarak, dan jalan pulang. Happy Birthday.
+                </div>
             </div>
-        </div>
-        
-        <div class="spread-text reveal">
-            <h2>COVER STORY: <br> The Art of Missing You.</h2>
-            <p>
-                <span style="font-size: 3rem; float: left; line-height: 0.8; margin-right: 10px; font-family: 'Cinzel Decorative'; color: var(--accent);">D</span>
-                i dunia fashion, tren datang dan pergi. Tapi di dunia keluarga kita, ada satu hal yang 'selalu in-style': Kehadiran Teteh.
-                Ulang tahun kali ini dirayakan di Okayama, tapi runway sesungguhnya sedang menunggumu di rumah.
-            </p>
-            <p>
-                Kami sudah menyiapkan 'koleksi terbaru' di rumah: Kamar yang rapi, masakan Ibu yang hangat, dan keributan adik yang kangen.
-                Selamat ulang tahun, Icon kami. Stay fabulous, stay healthy, dan cepat selesaikan 'photoshoot' di Jepang. We need our main model back.
-            </p>
-        </div>
-    </section>
 
-    <section class="style-file">
-        <h3 class="section-title reveal">STYLE FILE: EVOLUTION</h3>
-        <div class="fashion-grid reveal">
-            <div class="grid-item">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop" alt="Look 1">
-                <div class="grid-caption">THE JAPAN LOOK</div>
-            </div>
-            <div class="grid-item">
-                <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=1887&auto=format&fit=crop" alt="Look 2">
-                <div class="grid-caption">THE "KANGEN RUMAH" POSE</div>
-            </div>
-            <div class="grid-item">
-                <img src="https://images.unsplash.com/photo-1618018352910-72bdafdc82a6?q=80&w=1780&auto=format&fit=crop" alt="Look 3">
-                <div class="grid-caption">GOLDEN HOUR MOMENT</div>
+            <div class="meta-details reveal-text">
+                <div>PRICE: PRICELESS</div>
+                <div>FEB 2026 EDITION</div>
+                <div class="barcode"></div>
             </div>
         </div>
     </section>
 
-    <footer class="credits reveal">
-        <div class="role">CREATIVE DIRECTOR & BROTHER</div>
-        <div class="name">Afdhi.</div>
-        <div style="margin-top: 30px; font-size: 0.8rem; opacity: 0.6;">© 2026 FAMILY PUBLISHING. PRINTED WITH LOVE.</div>
+    <section class="content-section">
+        <div class="editorial-layout">
+            <div class="text-col">
+                <h3 class="reveal-text" style="font-size: 1rem; font-family: 'Montserrat'; letter-spacing: 3px; color: var(--accent-gold); margin-bottom: 20px;">EDITOR'S LETTER</h3>
+                <h2 class="reveal-text" style="font-size: 3rem; margin-bottom: 30px;">More Than<br>Just a Sister.</h2>
+                <div class="reveal-text">
+                    <p>
+                        <span class="drop-cap">D</span>i dunia yang serba cepat ini, kemewahan sejati bukanlah barang *branded* atau tiket *first class*, melainkan momen "pulang". 
+                        Teteh telah mengajarkan kami bahwa sejauh apapun kaki melangkah (bahkan sampai ke Jepang), hati tidak pernah salah alamat.
+                    </p>
+                    <p>
+                        Ulang tahun kali ini mungkin dirayakan di seberang lautan, tapi gaungnya terdengar sampai ke meja makan kami di rumah.
+                        Majalah ini didedikasikan untuk *our main character* yang sedang menyelesaikan *season* terakhirnya di negeri orang.
+                    </p>
+                </div>
+            </div>
+            <div class="img-col reveal-text">
+                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop" style="width: 100%; box-shadow: 20px 20px 0 #f0f0f0;">
+                <div style="margin-top: 15px; font-family: 'Montserrat'; font-size: 0.7rem; text-align: right;">PHOTOGRAPHED BY MEMORIES</div>
+            </div>
+        </div>
+
+        <div class="pull-quote reveal-text">
+            "Rumah bukan hanya tempat, tapi perasaan saat kita bersama."
+        </div>
+    </section>
+
+    <section class="gallery-section">
+        <div class="gallery-title reveal-text">
+            <h2 style="font-size: 2.5rem;">THE ARCHIVE</h2>
+            <div style="font-family: 'Montserrat'; letter-spacing: 2px; font-size: 0.8rem; margin-top: 10px;">CURATED MOMENTS</div>
+        </div>
+
+        <div class="gallery-grid">
+            <div class="gallery-item reveal-text">
+                <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1920&auto=format&fit=crop">
+                <div class="caption-overlay">THE "JAPAN" CHAPTER</div>
+            </div>
+            <div class="gallery-item reveal-text" style="transition-delay: 0.2s;">
+                <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=1887&auto=format&fit=crop">
+                <div class="caption-overlay">TIMELESS STYLE</div>
+            </div>
+            <div class="gallery-item reveal-text" style="transition-delay: 0.4s;">
+                <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=2073&auto=format&fit=crop">
+                <div class="caption-overlay">READY TO COME HOME</div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer-note">
+        <p style="color: #888; font-size: 0.9rem; font-family: 'Montserrat';">DRAFTED IN INDONESIA • SENT WITH LOVE TO OKAYAMA</p>
+        <div class="signature">Happy Birthday, Teh.</div>
+        <div style="margin-top: 40px;">
+            <button onclick="document.getElementById('bgm').play()" style="background: transparent; border: 1px solid #333; color: #fff; padding: 10px 20px; font-family: 'Montserrat'; cursor: pointer; border-color: #fff;">
+                ▶ PLAY MUSIC
+            </button>
+        </div>
     </footer>
 
     <script>
-        // SCROLL REVEAL JS SIMPLE
-        const reveals = document.querySelectorAll('.reveal');
+        // 1. LOADING SCREEN REMOVER
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    // Trigger animasi teks pertama setelah load
+                    revealOnScroll(); 
+                }, 1000);
+            }, 1500); // Lama loading 1.5 detik
+        });
 
-        function checkReveal() {
-            const triggerBottom = window.innerHeight * 0.85;
-            reveals.forEach(reveal => {
-                const revealTop = reveal.getBoundingClientRect().top;
-                if(revealTop < triggerBottom) {
-                    reveal.classList.add('active');
+        // 2. PARALLAX EFFECT (COVER)
+        window.addEventListener('scroll', () => {
+            const scroll = window.scrollY;
+            const bg = document.getElementById('parallax-bg');
+            if(scroll < window.innerHeight) {
+                bg.style.transform = `translateY(${scroll * 0.5}px) scale(1.1)`;
+            }
+        });
+
+        // 3. SMOOTH REVEAL ON SCROLL
+        const revealElements = document.querySelectorAll('.reveal-text');
+
+        function revealOnScroll() {
+            const triggerBottom = window.innerHeight * 0.85; // Muncul pas 85% layar
+            
+            revealElements.forEach(el => {
+                const boxTop = el.getBoundingClientRect().top;
+                if(boxTop < triggerBottom) {
+                    el.classList.add('active');
                 }
             });
         }
 
-        window.addEventListener('scroll', checkReveal);
-        // Check sekali pas load biar yang paling atas langsung muncul
-        checkReveal();
+        window.addEventListener('scroll', revealOnScroll);
     </script>
 </body>
 </html>
