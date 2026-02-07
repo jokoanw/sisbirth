@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surat Buat Teteh (Final Clean)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Teteh's Magazine: Platinum Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Montserrat:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@1,500&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-color: #202020;
-            --paper: #f9f9f9;    /* Kertas lebih putih dikit biar clean */
-            --gold: #c5a059;     
+            --bg-color: #1a1a1a;
+            --paper: #f4f1ea;     /* Krem kertas */
+            --gold: #c5a059;      
             --text: #222;     
             
-            /* Ukuran Buku */
-            --book-w: 350px; 
-            --book-h: 520px;
-            --speed: 0.6s;       /* Kecepatan animasi lebih snappy */
+            /* UKURAN BUKU */
+            --book-w: 380px;      /* Sedikit lebih lebar */
+            --book-h: 540px;
+            
+            /* KECEPATAN (DIPERLAMBAT BIAR SMOOTH) */
+            --speed: 1.2s;        
+            --curve: cubic-bezier(0.645, 0.045, 0.355, 1); /* Kurva smooth */
         }
 
         body {
@@ -24,38 +27,41 @@
             background: var(--bg-color);
             height: 100vh;
             display: flex; justify-content: center; align-items: center;
-            font-family: 'Montserrat', sans-serif; /* Default font bersih */
+            font-family: 'Montserrat', sans-serif;
             overflow: hidden;
+            perspective: 1500px; /* Jarak pandang 3D */
         }
 
-        /* --- WADAH BUKU (CONTAINER) --- */
+        /* --- WADAH BUKU --- */
         .book {
             position: relative;
             width: var(--book-w);
             height: var(--book-h);
-            perspective: 1500px;
             transform-style: preserve-3d;
-            /* Transisi geser ke tengah yang smooth */
-            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+            /* Transisi geser buku ke tengah/kanan */
+            transition: transform var(--speed) var(--curve);
         }
 
-        /* CLASS SAAT BUKU DIBUKA (GESER KANAN) */
+        /* POSISI SAAT BUKU DIBUKA (Geser ke Kanan 50% Lebar Buku) */
         .book.opened {
             transform: translateX(calc(var(--book-w) / 2));
         }
 
-        /* --- HALAMAN (KERTAS) --- */
+        /* --- HALAMAN --- */
         .page {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
             background-color: var(--paper);
-            transform-origin: left center;
-            transition: transform var(--speed) cubic-bezier(0.645, 0.045, 0.355, 1);
+            transform-origin: left center; /* Engsel di kiri */
             transform-style: preserve-3d;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.15);
+            
+            /* Transisi Membalik Halaman */
+            transition: transform var(--speed) var(--curve);
+            
+            box-shadow: 2px 2px 15px rgba(0,0,0,0.2);
+            border-radius: 0 5px 5px 0;
             cursor: pointer;
-            border-radius: 0 4px 4px 0;
         }
 
         /* SISI DEPAN & BELAKANG */
@@ -63,75 +69,74 @@
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            backface-visibility: hidden;
-            padding: 35px; /* Padding lebih lega */
+            backface-visibility: hidden; /* Sisi sebaliknya transparan */
+            padding: 40px;
             box-sizing: border-box;
             overflow: hidden;
         }
 
         .front {
             z-index: 2;
-            background-image: linear-gradient(to right, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0) 5%);
+            /* Gradien Lipatan Dalam */
+            background-image: linear-gradient(to right, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 10%);
         }
 
         .back {
             transform: rotateY(180deg);
             z-index: 1;
-            background-image: linear-gradient(to left, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0) 5%);
-            border-right: 1px solid #eee;
+            /* Gradien Lipatan Belakang */
+            background-image: linear-gradient(to left, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 10%);
+            border-right: 1px solid #ddd;
         }
 
+        /* LOGIKA FLIP */
         .flipped {
             transform: rotateY(-180deg);
         }
 
         /* --- TYPOGRAPHY --- */
-        h1, h2 { font-family: 'Cinzel Decorative', serif; color: var(--text); margin: 0; line-height: 1.2; }
+        h1, h2 { font-family: 'Cinzel Decorative', serif; color: var(--text); margin: 0; line-height: 1.1; }
         
-        /* TEXT BODY CLEAN & MINIMALIS */
+        /* Body Text Minimalis (Enak Dibaca) */
         .body-text {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.9rem; /* Ukuran pas baca */
-            font-weight: 400;
+            font-size: 0.95rem;
+            line-height: 1.8;
             color: #333;
-            line-height: 1.8; /* Spasi antar baris lega */
-            text-align: justify; /* Rata kiri kanan */
-            margin-bottom: 15px;
+            text-align: justify;
+            margin-bottom: 20px;
+            font-weight: 400;
         }
 
-        /* Drop Cap (Huruf Awal Besar) */
+        /* Huruf Awal Besar */
         .drop-cap {
-            float: left; font-size: 3.5rem; line-height: 0.8; 
-            font-family: 'Cinzel Decorative'; margin-right: 10px; 
+            float: left; font-size: 3.5rem; line-height: 0.7; 
+            font-family: 'Cinzel Decorative'; margin-right: 10px; margin-top: 5px;
             color: var(--gold);
         }
-        
+
         .page-num {
             position: absolute; bottom: 20px; width: 100%; text-align: center;
             font-size: 0.7rem; color: #999; left:0; letter-spacing: 2px;
         }
 
-        /* --- COVER PHOTO --- */
+        /* --- COVER IMAGE FULL (GONG) --- */
         .cover-photo {
-            width: 100%; height: 100%; object-fit: cover;
-            position: absolute; top:0; left:0;
-            filter: brightness(0.9);
+            position: absolute; top:0; left:0; width:100%; height:100%; 
+            object-fit: cover; z-index: -1;
+            filter: brightness(0.85) contrast(1.1);
         }
-        .cover-overlay {
-            position: absolute; top:0; left:0; width:100%; height:100%;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.8));
-        }
-        .cover-content {
-            position: relative; z-index: 10; color: white;
-            height: 100%; display: flex; flex-direction: column; 
-            justify-content: flex-end; padding-bottom: 60px;
-            text-align: center;
+        
+        .cover-title-group {
+            height: 100%; display: flex; flex-direction: column; justify-content: flex-end;
+            padding-bottom: 60px; text-align: center; color: white;
+            position: relative; z-index: 2;
         }
 
         /* RESPONSIVE */
         @media (max-width: 768px) {
-            :root { --book-w: 85vw; --book-h: 120vw; }
-            .book.opened { transform: translateX(0); } /* Mobile ga usah geser */
+            :root { --book-w: 85vw; --book-h: 130vw; }
+            .book.opened { transform: translateX(0); } /* Mobile diem aja */
+            .front, .back { padding: 25px; }
             .body-text { font-size: 0.85rem; }
         }
     </style>
@@ -142,35 +147,35 @@
         <source src="lagu_piano.mp3" type="audio/mpeg">
     </audio>
 
-    <div style="position: fixed; top: 20px; color: rgba(255,255,255,0.4); font-size: 0.7rem; letter-spacing: 1px;">
-        TAP HALAMAN UNTUK MEMBALIK
+    <div style="position: fixed; top: 20px; color: rgba(255,255,255,0.3); font-size: 0.7rem; letter-spacing: 1px;">
+        TAP KANAN UNTUK BUKA • TAP KIRI UNTUK BALIK
     </div>
 
     <div class="book" id="book">
         
         <div class="page" id="p1">
-            <div class="front" style="padding: 0;">
+            <div class="front" style="padding:0;">
                 <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1920&auto=format&fit=crop" class="cover-photo">
-                <div class="cover-overlay"></div>
                 
-                <div class="cover-content">
-                    <div style="font-family: 'Montserrat'; letter-spacing: 4px; font-size: 0.8rem; color: var(--gold);">SPECIAL EDITION</div>
-                    <h1 style="font-size: 4rem; color: white; text-shadow: 0 5px 20px rgba(0,0,0,0.6);">TETEH</h1>
-                    <div style="font-size: 0.7rem; margin-top: 15px; opacity: 0.8; letter-spacing: 2px;">THE HOMECOMING ISSUE</div>
+                <div class="cover-title-group">
+                    <div style="font-family: 'Montserrat'; letter-spacing: 5px; font-size: 0.8rem; color: var(--gold);">SPECIAL EDITION</div>
+                    <h1 style="font-size: 4.5rem; text-shadow: 0 10px 30px rgba(0,0,0,0.8); margin: 10px 0;">TETEH</h1>
+                    <div style="font-family: 'Montserrat'; letter-spacing: 2px; font-size: 0.8rem; opacity: 0.8;">THE HOMECOMING ISSUE</div>
                 </div>
             </div>
+            
             <div class="back">
                 <div style="text-align: center; margin-top: 20px; border-bottom: 2px solid var(--gold); padding-bottom: 20px;">
-                    <h2 style="color: var(--text);">Preface</h2>
+                    <h2>Preface</h2>
                     <div style="font-size: 0.7rem; color: #888; margin-top: 5px;">A NOTE FROM HOME</div>
                 </div>
-                <div style="margin-top: 40px; text-align: center; font-style: italic; color: #555; padding: 0 20px;">
-                    "Jauh di mata, tapi selalu dekat di doa.<br>
-                    Surat kecil ini dikirim dari rumah, <br>
-                    melintasi ribuan kilometer untukmu."
+                <div style="margin-top: 60px; text-align: center; font-style: italic; font-family: 'Cormorant Garamond'; font-size: 1.2rem; color: #555; padding: 0 20px;">
+                    "Surat ini ditulis di Indonesia,<br>
+                    dikirim lewat doa,<br>
+                    untuk dibaca di Okayama."
                 </div>
-                <div style="text-align: center; margin-top: 60px;">
-                    <span style="font-size: 2rem; color: var(--gold);">V.26</span>
+                <div style="text-align: center; margin-top: 80px;">
+                    <span style="font-size: 2rem; color: var(--gold);">VOL. 26</span>
                 </div>
                 <div class="page-num">1</div>
             </div>
@@ -178,18 +183,17 @@
 
         <div class="page" id="p2">
             <div class="front">
-                <h2 style="font-size: 1.5rem; margin-bottom: 20px;">Dear Teteh,</h2>
-                
+                <h2 style="font-size: 1.5rem; margin-bottom: 25px;">Dear Teteh,</h2>
                 <div class="body-text">
                     <span class="drop-cap">A</span>ssalamualaikum Teh, Happy Birthday! Gak kerasa ya umur nambah lagi. Tahun ini mungkin kita gak bisa tiup lilin bareng secara langsung, tapi doa dari sini gak pernah putus.
                 </div>
                 <div class="body-text">
-                    Semoga di Okayama sehat terus, rezekinya lancar, dan segala urusan skripsi atau kerjaannya dimudahkan.
+                    Semoga di sana sehat terus, rezekinya lancar, dan segala urusan skripsi atau kerjaannya dimudahkan.
                 </div>
                 <div class="page-num">2</div>
             </div>
             <div class="back">
-                <div class="body-text" style="margin-top: 20px;">
+                <div class="body-text" style="margin-top: 30px;">
                     Jujur, rumah sepi banget ga ada Teteh. Ibu sering masak makanan kesukaan Teteh, terus kita jadi inget, "Wah kalau ada Teteh pasti ludes nih".
                 </div>
                 <div class="body-text">
@@ -201,7 +205,7 @@
 
         <div class="page" id="p3">
             <div class="front">
-                <h2 style="font-size: 1.5rem; margin-bottom: 20px;">Tentang Rindu</h2>
+                <h2 style="font-size: 1.5rem; margin-bottom: 25px;">Tentang Rindu</h2>
                 <div class="body-text">
                     Inget gak waktu kita jalan-jalan terakhir sebelum Teteh berangkat? Foto-fotonya masih aku simpen.
                 </div>
@@ -211,11 +215,11 @@
                 <div class="page-num">4</div>
             </div>
             <div class="back">
-                <div style="width: 100%; height: 65%; background: #fff; padding: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transform: rotate(1deg);">
+                <div style="width: 100%; height: 65%; background: #fff; padding: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transform: rotate(2deg);">
                     <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=1887&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
-                <div style="text-align: center; margin-top: 25px; font-size: 0.8rem; letter-spacing: 2px;">
-                    SEE YOU SOON
+                <div style="text-align: center; margin-top: 30px; font-family: 'Cinzel Decorative'; font-size: 0.9rem; color: var(--gold);">
+                    MEMORIES
                 </div>
                 <div class="page-num">5</div>
             </div>
@@ -223,7 +227,7 @@
 
         <div class="page" id="p4">
             <div class="front">
-                <h2 style="font-size: 1.5rem; margin-bottom: 20px;">Harapan</h2>
+                <h2 style="font-size: 1.5rem; margin-bottom: 25px;">Harapan</h2>
                 <div class="body-text">
                     Pulanglah dengan selamat, Teh. Kita udah siapin banyak cerita buat dibahas sampai pagi. 
                 </div>
@@ -233,11 +237,11 @@
                 <div class="page-num">6</div>
             </div>
             <div class="back">
-                <div style="text-align: center; margin-top: 40px;">
-                    <div class="body-text" style="text-align: center; font-style: italic;">
+                <div style="text-align: center; margin-top: 50px;">
+                    <div style="font-family: 'Cormorant Garamond'; font-style: italic; font-size: 1.2rem;">
                         Sekali lagi,<br>Selamat Ulang Tahun!
                     </div>
-                    <div style="margin-top: 30px; font-weight: bold; font-size: 1.2rem;">
+                    <div style="margin-top: 40px; font-weight: 600; font-size: 1.1rem; letter-spacing: 2px;">
                         WE LOVE YOU
                     </div>
                     <div style="margin-top: 10px; font-size: 0.9rem;">
@@ -252,18 +256,19 @@
         <div class="page" id="p5">
             <div class="front" style="display: flex; justify-content: center; align-items: center; text-align: center;">
                 <div>
-                    <h1 style="font-size: 4rem; color: #ccc;">END</h1>
-                    <div style="margin-top: 10px; font-size: 0.7rem; letter-spacing: 2px;">MENUNGGU KEPULANGANMU</div>
+                    <h1 style="font-size: 4rem; color: #ddd;">END</h1>
+                    <div style="margin-top: 10px; font-size: 0.7rem; letter-spacing: 2px; color: #999;">MENUNGGU KEPULANGANMU</div>
                     
-                    <button onclick="closeBook()" style="margin-top: 50px; padding: 12px 30px; background: var(--text); color: white; border: none; font-family: 'Montserrat'; font-size: 0.8rem; letter-spacing: 1px; cursor: pointer; transition: 0.3s;">
+                    <button onclick="closeBook()" style="margin-top: 60px; padding: 15px 40px; background: var(--text); color: white; border: none; font-family: 'Montserrat'; font-size: 0.8rem; letter-spacing: 2px; cursor: pointer; transition: 0.3s; border-radius: 50px;">
                         TUTUP BUKU
                     </button>
                 </div>
                 <div class="page-num">8</div>
             </div>
+            
             <div class="back" style="background-color: #111; color: #555; display: flex; justify-content: center; align-items: center;">
                 <div style="text-align: center;">
-                    <div style="font-size: 0.7rem; letter-spacing: 1px;">DESIGNED WITH LOVE</div>
+                    <div style="font-size: 0.7rem; letter-spacing: 2px;">DESIGNED BY AFDHI</div>
                 </div>
             </div>
         </div>
@@ -274,40 +279,44 @@
         const book = document.getElementById('book');
         const pages = document.querySelectorAll('.page');
         const bgm = document.getElementById('bgm');
-        let isAudioPlaying = false;
+        let audioStarted = false;
 
-        // Z-Index Logic
+        // 1. SETUP Z-INDEX (Biar Tumpukan Bener)
+        // Halaman pertama di paling atas, halaman terakhir di paling bawah
         pages.forEach((page, i) => {
             page.style.zIndex = pages.length - i;
         });
 
+        // 2. LOGIKA KLIK HALAMAN
         pages.forEach((page, i) => {
             page.addEventListener('click', function() {
                 
-                // Audio trigger
-                if(!isAudioPlaying) {
-                    bgm.play().catch(e => console.log("Audio block"));
-                    isAudioPlaying = true;
+                // Mulai audio pas klik pertama
+                if (!audioStarted) {
+                    bgm.play().catch(e => console.log("Audio perlu interaksi user"));
+                    audioStarted = true;
                 }
 
                 if (this.classList.contains('flipped')) {
-                    // TUTUP HALAMAN
+                    // --- BALIK KE KANAN (TUTUP HALAMAN) ---
                     this.classList.remove('flipped');
+                    
+                    // Reset z-index setelah animasi selesai (1.2s sesuai CSS)
                     setTimeout(() => {
                         this.style.zIndex = pages.length - i;
-                    }, 500);
+                    }, 1200);
 
-                    // LOGIKA CENTER: Kalau halaman 1 ditutup, buku geser ke tengah
+                    // LOGIKA CENTER: Jika halaman 1 ditutup, balikin buku ke tengah
                     if (i === 0) {
                         book.classList.remove('opened');
                     }
 
                 } else {
-                    // BUKA HALAMAN
+                    // --- BALIK KE KIRI (BUKA HALAMAN) ---
                     this.classList.add('flipped');
-                    this.style.zIndex = 10 + i;
+                    this.style.zIndex = 10 + i; // Timpa halaman sebelumnya
 
-                    // LOGIKA CENTER: Kalau halaman 1 dibuka, buku geser kanan
+                    // LOGIKA CENTER: Jika halaman 1 dibuka, geser buku ke kanan
                     if (i === 0) {
                         book.classList.add('opened');
                     }
@@ -315,26 +324,32 @@
             });
         });
 
-        // FUNGSI TUTUP BUKU YANG DIPERBAIKI
+        // 3. FUNGSI TOMBOL "TUTUP BUKU" (OTOMATIS)
         function closeBook() {
-            // Tutup semua halaman dari belakang ke depan
-            for(let i = pages.length - 1; i >= 0; i--) {
-                setTimeout(() => {
-                    if(pages[i].classList.contains('flipped')) {
-                        // Hapus class flipped
+            // Kita tutup dari halaman paling belakang (p5) ke depan (p1)
+            // Pakai delay biar animasinya berurutan
+            
+            let delay = 0;
+            
+            // Loop terbalik dari halaman terakhir ke awal
+            for (let i = pages.length - 1; i >= 0; i--) {
+                if (pages[i].classList.contains('flipped')) {
+                    
+                    setTimeout(() => {
                         pages[i].classList.remove('flipped');
                         
-                        // Reset z-index
                         setTimeout(() => {
                             pages[i].style.zIndex = pages.length - i;
-                        }, 500);
+                        }, 1200);
 
-                        // PENTING: Jika sampai di halaman 0 (cover), reset posisi buku ke tengah
+                        // PENTING: Pas sampe halaman 1 (i==0), geser buku ke tengah
                         if (i === 0) {
                             book.classList.remove('opened');
                         }
-                    }
-                }, (pages.length - 1 - i) * 150); // Delay biar animasinya 'satu-satu'
+                    }, delay);
+                    
+                    delay += 300; // Tiap halaman jeda 0.3 detik biar keliatan urutannya
+                }
             }
         }
     </script>
