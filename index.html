@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boarding Pass: Pulang</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Dancing+Script:wght@600&family=Courier+Prime&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- SETUP BACKGROUND --- */
+        body {
+            margin: 0; padding: 0;
+            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            background: linear-gradient(135deg, #1c1c1c 0%, #3a3a3a 100%);
+            perspective: 1000px; /* Kunci efek 3D */
+            font-family: 'Oswald', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Dekorasi background biar ga sepi */
+        .bg-deco {
+            position: absolute; width: 150vw; height: 150vw;
+            background: radial-gradient(circle, rgba(255,215,0,0.05) 0%, transparent 70%);
+            animation: rotate 60s linear infinite; z-index: -1;
+        }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* --- WADAH TIKET (CONTAINER) --- */
+        .ticket-container {
+            width: 350px; height: 600px;
+            position: relative;
+            transform-style: preserve-3d; /* Biar bisa dibalik */
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        /* Class ini ditambahkan lewat JS saat diklik buat mbalik */
+        .ticket-container.flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* --- SISI DEPAN & BELAKANG (COMMON) --- */
+        .card-side {
+            position: absolute;
+            width: 100%; height: 100%;
+            -webkit-backface-visibility: hidden; /* Sisi belakang ga keliatan pas dibalik */
+            backface-visibility: hidden;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* --- SISI DEPAN (THE TICKET) --- */
+        .front {
+            background: #fff;
+            display: flex; flex-direction: column;
+        }
+
+        /* Header Biru */
+        .header {
+            background: #00235B; /* Warna maskapai */
+            height: 120px;
+            padding: 20px;
+            color: white;
+            position: relative;
+        }
+        
+        .airline-logo { font-size: 1.5rem; letter-spacing: 2px; opacity: 0.8; }
+        .flight-type { font-size: 0.8rem; letter-spacing: 1px; color: #FFD700; margin-top: 5px; text-transform: uppercase; }
+
+        /* Badan Tiket */
+        .body-content {
+            padding: 25px;
+            flex-grow: 1;
+            background-image: radial-gradient(#ddd 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .route {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 30px;
+        }
+        .code { font-size: 3rem; font-weight: 700; color: #00235B; }
+        .plane-icon { width: 30px; height: 30px; fill: #ccc; transform: rotate(90deg); }
+
+        .info-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+            margin-bottom: 30px;
+        }
+        .label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        .value { font-size: 1.1rem; color: #333; font-weight: 500; }
+
+        .barcode-area {
+            margin-top: auto;
+            border-top: 2px dashed #ccc;
+            padding-top: 20px;
+            text-align: center;
+        }
+        .barcode { height: 40px; background: #333; width: 80%; margin: 0 auto; margin-bottom: 10px; }
+        
+        /* Efek Hologram/Shine Emas */
+        .shine {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0) 40%, rgba(255,215,0,0.2) 50%, rgba(255,255,255,0) 60%);
+            background-size: 200% 200%;
+            animation: hologram 4s infinite;
+            pointer-events: none;
+        }
+        @keyframes hologram { 0% { background-position: 100% 100%; } 100% { background-position: 0% 0%; } }
+
+        /* --- SISI BELAKANG (THE LETTER) --- */
+        .back {
+            background: #fdfbf7; /* Kertas tua */
+            transform: rotateY(180deg);
+            padding: 30px;
+            box-sizing: border-box;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            border: 10px solid #fff; /* Bingkai foto */
+        }
+
+        .handwriting {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.4rem;
+            line-height: 1.6;
+            color: #444;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .stamp {
+            border: 3px solid #c0392b;
+            color: #c0392b;
+            padding: 5px 10px;
+            font-family: 'Courier Prime', monospace;
+            font-weight: bold;
+            transform: rotate(-15deg);
+            display: inline-block;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        /* Audio Player Custom */
+        .custom-audio {
+            width: 100%;
+            background: #eee;
+            border-radius: 50px;
+            padding: 10px;
+            display: flex; justify-content: center;
+        }
+        
+        .hint {
+            position: absolute; bottom: 20px; width: 100%; text-align: center;
+            font-size: 0.8rem; color: rgba(255,255,255,0.5);
+            animation: bounce 2s infinite; pointer-events: none;
+        }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-deco"></div>
+
+    <div class="ticket-container" onclick="flipCard(this)">
+        
+        <div class="card-side front">
+            <div class="shine"></div> <div class="header">
+                <div class="airline-logo">GARUDA FAMILY AIRLINES</div>
+                <div class="flight-type">Birthday Class • Priority</div>
+            </div>
+
+            <div class="body-content">
+                <div class="route">
+                    <div style="text-align: left;">
+                        <div class="code">OKJ</div>
+                        <div class="label">Okayama</div>
+                    </div>
+                    <svg class="plane-icon" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+                    <div style="text-align: right;">
+                        <div class="code">HOME</div>
+                        <div class="label">Indonesia</div>
+                    </div>
+                </div>
+
+                <div class="info-grid">
+                    <div>
+                        <div class="label">Passenger</div>
+                        <div class="value">Teteh Tersayang</div> </div>
+                    <div>
+                        <div class="label">Date</div>
+                        <div class="value">Feb 2026</div> </div>
+                    <div>
+                        <div class="label">Seat</div>
+                        <div class="value">1A (Heart)</div>
+                    </div>
+                    <div>
+                        <div class="label">Gate</div>
+                        <div class="value">FAM-01</div>
+                    </div>
+                    <div>
+                        <div class="label">Boarding Time</div>
+                        <div class="value">ASAP</div>
+                    </div>
+                </div>
+
+                <div class="barcode-area">
+                    <div class="barcode"></div>
+                    <div class="label">TAP TO FLIP TICKET</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-side back">
+            <div class="stamp">APPROVED: GOING HOME</div>
+            
+            <div class="handwriting">
+                "Hai Teh,<br><br>
+                Tiket ini valid selamanya. <br>
+                Selamat Ulang Tahun ya. <br>
+                Sehat selalu di Okayama.<br>
+                Kami semua nunggu Teteh pulang.<br><br>
+                Love you!"
+            </div>
+
+            <audio controls class="custom-audio">
+                <source src="lagu.mp3" type="audio/mpeg">
+            </audio>
+
+            <div style="margin-top: 20px; font-size: 0.7rem; color: #999;">
+                (Klik lagi untuk balik ke depan)
+            </div>
+        </div>
+
+    </div>
+
+    <div class="hint">Tap kartu untuk melihat pesan rahasia</div>
+
+    <script>
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+            
+            // Auto play audio pas dibalik ke belakang (opsional)
+            const audio = document.querySelector('audio');
+            if (card.classList.contains('flipped')) {
+                // audio.play(); // Uncomment kalau mau auto-play
+            } else {
+                audio.pause();
+            }
+        }
+
+        // EFEK 3D TILT (Mengikuti Mouse)
+        const card = document.querySelector('.ticket-container');
+        const body = document.querySelector('body');
+
+        body.addEventListener('mousemove', (e) => {
+            // Kalkulasi posisi mouse
+            let xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            let yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            
+            // Terapkan rotasi ringan (kalo card ga lagi dibalik)
+            if(!card.classList.contains('flipped')) {
+                card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            }
+        });
+
+        // Reset posisi pas mouse keluar
+        body.addEventListener('mouseleave', () => {
+            if(!card.classList.contains('flipped')) {
+                card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+            }
+        });
+    </script>
+</body>
+</html>
