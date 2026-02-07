@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For Teteh: Terbuang Dalam Waktu</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;600;700&family=Nothing+You+Could+Do&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;800&family=Nothing+You+Could+Do&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
@@ -12,14 +12,12 @@
             --kodak-yellow: #ffc20e; 
             --kodak-red: #ee1c25;
             --film-bg: #101010;
-            
-            /* Dimensi Film */
             --film-height: 420px;
         }
 
         body {
             margin: 0; padding: 0;
-            background-color: #050505;
+            background-color: #080808;
             height: 100vh;
             display: flex; align-items: center;
             font-family: 'Montserrat', sans-serif;
@@ -43,55 +41,60 @@
         }
         .gallery-wrapper::-webkit-scrollbar { display: none; }
 
-        /* --- 1. KODAK CANISTER (FIXED LAYOUT) --- */
+        /* --- 1. KODAK CANISTER (REVISI LAYOUT TOTAL) --- */
         .canister-section {
-            flex-shrink: 0; width: 350px; height: 100%;
+            flex-shrink: 0; width: 400px; height: 100%;
             display: flex; align-items: center; justify-content: center;
             position: relative; z-index: 10;
-            background: #050505;
-            box-shadow: 20px 0 50px rgba(0,0,0,1);
+            background: #080808;
+            box-shadow: 10px 0 50px rgba(0,0,0,1);
         }
 
         .canister-body {
-            width: 170px; height: 320px;
-            /* Gradient Metalik Kuning */
-            background: linear-gradient(90deg, #444 0%, #b8860b 10%, var(--kodak-yellow) 25%, var(--kodak-yellow) 75%, #b8860b 90%, #444 100%);
+            width: 180px; height: 320px;
+            /* Body Kuning Metalik */
+            background: linear-gradient(90deg, #b8860b 0%, var(--kodak-yellow) 20%, var(--kodak-yellow) 80%, #b8860b 100%);
             border-radius: 12px;
             position: relative;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            display: flex; justify-content: center; align-items: center;
             border: 2px solid #222;
         }
 
         /* Tutup Atas Bawah */
         .canister-cap {
-            position: absolute; width: 106%; height: 30px; background: #333;
+            position: absolute; width: 110%; height: 35px; background: #333;
             border-radius: 6px;
             background: linear-gradient(90deg, #111, #555, #111);
-            box-shadow: 0 5px 10px rgba(0,0,0,0.5);
-            z-index: 2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 2;
         }
         .cap-top { top: -20px; }
         .cap-bottom { bottom: -20px; }
 
-        /* LOGO VERTIKAL (Tanpa Tabrakan) */
-        .brand-area {
-            height: 70%; display: flex; align-items: center; justify-content: center;
-            transform: rotate(-90deg);
-        }
-        .logo-text {
-            font-family: 'Bebas Neue'; font-size: 3.8rem; color: var(--kodak-red);
-            letter-spacing: 2px; text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
-            white-space: nowrap; margin: 0;
+        /* STIKER LABEL (BIAR TULISAN GAK TUMPUK) */
+        .label-sticker {
+            width: 80%; height: 70%;
+            background: rgba(255,255,255,0.9); /* Putih kertas */
+            border-radius: 5px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 10px; box-sizing: border-box;
+            border: 1px solid #ccc;
         }
 
-        /* DETAIL ISO (Horizontal di Bawah) */
-        .iso-area {
-            position: absolute; bottom: 20px; width: 100%;
-            text-align: center; color: #000;
+        .brand-text {
+            font-family: 'Bebas Neue'; font-size: 3.5rem; color: var(--kodak-red);
+            line-height: 0.9; margin: 0; text-align: center;
         }
-        .iso-text { font-weight: 800; font-size: 1.2rem; letter-spacing: 1px; line-height: 1; }
-        .exp-text { font-size: 0.7rem; font-weight: 600; letter-spacing: 2px; margin-top: 5px; opacity: 0.8; }
+        .type-text {
+            font-family: 'Montserrat'; font-weight: 800; color: black;
+            font-size: 1.2rem; margin-top: 5px; text-transform: uppercase;
+        }
+        .detail-text {
+            font-family: 'Montserrat'; font-weight: 600; color: #555;
+            font-size: 0.8rem; margin-top: 5px;
+        }
 
+        /* Bibir Film */
         .film-lip {
             position: absolute; right: -20px; top: 10%; height: 80%; width: 40px;
             background: #151515; z-index: -1;
@@ -103,7 +106,6 @@
             background-color: #151515; padding: 0 80px;
             align-items: center; position: relative;
         }
-        /* Perforasi Film */
         .perforation-top, .perforation-bottom {
             position: absolute; left: 0; width: 100%; height: 25px;
             background-image: linear-gradient(to right, #fff 40%, transparent 40%);
@@ -127,14 +129,12 @@
         }
         .frame-meta span { color: var(--kodak-yellow); margin-right: 5px; }
 
-        /* Foto Style */
         .frame img {
             width: 100%; height: 100%; object-fit: cover;
             filter: sepia(10%) contrast(1.1) saturate(0.9); transition: transform 0.5s;
         }
         .frame:hover img { transform: scale(1.03); filter: sepia(0%); }
 
-        /* Text Style */
         .text-content {
             padding: 40px; width: 100%; height: 100%; box-sizing: border-box;
             background: #080808; display: flex; flex-direction: column; justify-content: center;
@@ -147,59 +147,69 @@
             font-size: 0.95rem; line-height: 1.7; color: #ccc; text-align: justify;
         }
 
-        /* Quote Style */
-        .quote-content {
-            text-align: center; padding: 20px; font-family: 'Nothing You Could Do', cursive;
-            font-size: 1.8rem; color: white; line-height: 1.4;
-        }
-
-        /* --- SPOTIFY PLAYER BAR (NEW) --- */
+        /* --- SPOTIFY WIDGET (REVISI: POJOK KANAN ATAS & ANIMASI MARQUEE) --- */
         .spotify-widget {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: #181818; width: 320px; height: 80px;
-            border-radius: 15px; display: flex; align-items: center; padding: 0 20px;
+            position: fixed; 
+            top: 30px; right: 30px; /* PINDAH KE ATAS BIAR GAK NUTUPIN FILM */
+            background: rgba(24, 24, 24, 0.9); 
+            backdrop-filter: blur(10px);
+            width: 300px; height: 70px;
+            border-radius: 12px; display: flex; align-items: center; padding: 0 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1000;
             border: 1px solid #333;
             transition: all 0.3s;
         }
         
         .album-cover {
-            width: 50px; height: 50px; border-radius: 5px; margin-right: 15px;
-            background: #333; overflow: hidden; position: relative;
+            width: 45px; height: 45px; border-radius: 4px; margin-right: 15px;
+            background: #333; overflow: hidden; flex-shrink: 0;
         }
         .album-cover img { width: 100%; height: 100%; object-fit: cover; }
         
-        /* Animasi piringan hitam muter kalau play */
+        /* Animasi Piringan Hitam (Opsional: Spin saat play) */
         .playing .album-cover img { animation: spin 4s linear infinite; border-radius: 50%; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        .track-info { flex: 1; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
-        .track-title {
-            font-weight: 700; font-size: 0.9rem; color: white; margin-bottom: 4px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        /* AREA JUDUL LAGU (MARQUEE) */
+        .track-info { 
+            flex: 1; overflow: hidden; display: flex; flex-direction: column; justify-content: center;
+            position: relative; height: 100%;
         }
+        
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .track-title {
+            font-weight: 700; font-size: 0.9rem; color: white; margin-bottom: 2px;
+            display: inline-block;
+            /* Animasi Jalan */
+            animation: marquee 8s linear infinite;
+        }
+        
+        /* Stop animasi kalau lagi pause */
+        .paused-anim .track-title { animation-play-state: paused; }
+
+        @keyframes marquee {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
         .artist-name { font-size: 0.75rem; color: #b3b3b3; }
 
-        .player-controls { display: flex; gap: 15px; align-items: center; }
-        .control-btn {
-            background: transparent; border: none; color: #b3b3b3; font-size: 1.2rem; cursor: pointer;
-        }
+        .player-controls { display: flex; gap: 10px; align-items: center; margin-left: 10px;}
         .play-btn {
-            width: 35px; height: 35px; border-radius: 50%; background: white; color: black;
+            width: 35px; height: 35px; border-radius: 50%; background: #1db954; color: white;
             display: flex; justify-content: center; align-items: center; font-size: 1rem;
-            transition: transform 0.2s;
+            border: none; cursor: pointer; transition: transform 0.2s;
         }
-        .play-btn:hover { transform: scale(1.1); }
-        .control-btn:hover { color: white; }
-
-        /* Progress Bar Kecil */
-        .progress-container {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 3px;
-            background: #444; border-radius: 0 0 15px 15px; overflow: hidden;
-        }
+        .play-btn:hover { transform: scale(1.1); background: #1ed760; }
+        
         .progress-bar {
-            width: 0%; height: 100%; background: #1db954; /* Spotify Green */
-            transition: width 0.5s linear;
+            position: absolute; bottom: 0; left: 0; height: 3px; 
+            background: #1db954; width: 0%; transition: width 0.5s linear;
         }
 
     </style>
@@ -212,28 +222,26 @@
         <source src="terbuang_dalam_waktu.mp3" type="audio/mpeg">
     </audio>
 
-    <div class="spotify-widget" id="spotifyWidget">
+    <div class="spotify-widget paused-anim" id="spotifyWidget">
         <div class="album-cover">
             <img src="https://i.scdn.co/image/ab67616d0000b273413867623190445d070a2410" alt="Album Art">
         </div>
         <div class="track-info">
-            <div class="track-title">Terbuang dalam Waktu</div>
+            <div class="marquee-container">
+                <div class="track-title">Terbuang dalam Waktu - Barasuara &nbsp;&nbsp;&nbsp;&nbsp; Terbuang dalam Waktu - Barasuara &nbsp;&nbsp;&nbsp;&nbsp;</div>
+            </div>
             <div class="artist-name">Barasuara</div>
         </div>
         <div class="player-controls">
-            <button class="control-btn"><i class="fas fa-step-backward"></i></button>
             <button class="play-btn" onclick="toggleAudio()">
                 <i class="fas fa-play" id="playIcon"></i>
             </button>
-            <button class="control-btn"><i class="fas fa-step-forward"></i></button>
         </div>
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
-        </div>
+        <div class="progress-bar" id="progressBar"></div>
     </div>
 
-    <div style="position: fixed; bottom: 120px; width: 100%; text-align: center; color: rgba(255,255,255,0.3); font-size: 0.8rem; letter-spacing: 2px; pointer-events: none;">
-        << SCROLL UNTUK MEMBUKA FILM >>
+    <div style="position: fixed; bottom: 30px; width: 100%; text-align: center; color: rgba(255,255,255,0.3); font-size: 0.8rem; letter-spacing: 2px; pointer-events: none;">
+        << GESER FILM KE KIRI >>
     </div>
 
     <div class="gallery-wrapper" id="gallery">
@@ -242,12 +250,12 @@
             <div class="canister-body">
                 <div class="canister-cap cap-top"></div>
                 
-                <div class="brand-area">
-                    <h1 class="logo-text">KODAK PORTRA</h1>
-                </div>
-                <div class="iso-area">
-                    <div class="iso-text">400</div>
-                    <div class="exp-text">36 EXP</div>
+                <div class="label-sticker">
+                    <h1 class="brand-text">KODAK</h1>
+                    <div class="type-text">PORTRA 400</div>
+                    <div style="width: 100%; height: 2px; background: #000; margin: 5px 0;"></div>
+                    <div class="detail-text">36 EXPOSURES</div>
+                    <div class="detail-text" style="font-size: 0.6rem;">PROCESS C-41</div>
                 </div>
 
                 <div class="film-lip"></div>
@@ -308,22 +316,7 @@
                 </div>
                 <div class="frame-meta"><span>7</span>A</div>
             </div>
-
-            <div class="frame">
-                <div class="text-content">
-                    <div class="text-title">Scene 3: Harapan</div>
-                    <div class="text-body">
-                        "Tahun ini kadonya doa dulu ya. Semoga sehat terus, skripsinya lancar, dan semua urusan di Okayama beres. Nanti pas Teteh mendarat, kita rayain beneran pakai martabak spesial."
-                    </div>
-                </div>
-                <div class="frame-meta"><span>8</span>A</div>
-            </div>
-
-            <div class="frame">
-                <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=2073&auto=format&fit=crop">
-                <div class="frame-meta"><span>9</span>A</div>
-            </div>
-
+            
              <div class="frame">
                 <div class="text-content">
                     <div class="text-title">Final Cut</div>
@@ -331,12 +324,7 @@
                         "Terima kasih sudah jadi kakak yang inspiratif. Aku bangga banget sama Teteh. Safe flight pulang nanti. We love you so much!"
                     </div>
                 </div>
-                <div class="frame-meta"><span>10</span>A</div>
-            </div>
-
-            <div class="frame">
-                <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1887&auto=format&fit=crop">
-                <div class="frame-meta"><span>11</span>A</div>
+                <div class="frame-meta"><span>8</span>A</div>
             </div>
 
             <div class="frame">
@@ -345,7 +333,7 @@
                     <p style="color: #666; margin-top: 10px;">DIRECTED BY AFDHI</p>
                     <div style="font-size: 3rem; color: var(--kodak-red); margin-top: 20px;">❤</div>
                 </div>
-                <div class="frame-meta"><span>12</span>A</div>
+                <div class="frame-meta"><span>9</span>A</div>
             </div>
 
             <div style="width: 150px; height: 100%; background: linear-gradient(to right, #151515, transparent);"></div>
@@ -389,17 +377,18 @@
                 bgm.play();
                 playIcon.classList.remove('fa-play');
                 playIcon.classList.add('fa-pause');
-                widget.classList.add('playing');
+                widget.classList.remove('paused-anim'); // Mulai animasi teks
+                widget.classList.add('playing'); // Mulai animasi piringan
                 updateProgress();
             } else {
                 bgm.pause();
                 playIcon.classList.remove('fa-pause');
                 playIcon.classList.add('fa-play');
+                widget.classList.add('paused-anim'); // Stop animasi teks
                 widget.classList.remove('playing');
             }
         }
 
-        // Fake Progress Bar Animation
         function updateProgress() {
             if(bgm.paused) return;
             const percentage = (bgm.currentTime / bgm.duration) * 100;
