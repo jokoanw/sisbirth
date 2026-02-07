@@ -3,254 +3,303 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surat Buat Teteh</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Ephesis&display=swap" rel="stylesheet">
+    <title>A Roll of Memories</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-color: #2c3e50;
-            --paper: #fdfbf7; /* Kertas hangat */
-            --gold: #b38b59;
-            --text: #2b2b2b;
-            /* Ukuran Buku */
-            --book-w: 350px; 
-            --book-h: 520px;
-            --speed: 0.6s;
+            --kodak-yellow: #ffc500;
+            --kodak-red: #ea001e;
+            --film-black: #151515;
+            --text-white: #f0f0f0;
         }
 
         body {
             margin: 0; padding: 0;
-            background: var(--bg-color);
+            background-color: #222; /* Meja gelap */
             height: 100vh;
-            display: flex; justify-content: center; align-items: center;
-            font-family: 'Cormorant Garamond', serif;
-            overflow: hidden;
+            display: flex; align-items: center;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden; /* Hide scrollbar default */
         }
 
-        /* WADAH BUKU */
-        .book {
+        /* --- THE SCROLL CONTAINER (JALUR FILM) --- */
+        .scroll-container {
+            width: 100%;
+            height: 100%;
+            overflow-x: auto; /* Scroll samping */
+            overflow-y: hidden;
+            display: flex;
+            align-items: center;
+            scroll-behavior: smooth;
+            /* Sembunyikan Scrollbar biar rapi */
+            scrollbar-width: none; 
+            cursor: grab;
+        }
+        .scroll-container::-webkit-scrollbar { display: none; }
+
+        /* --- 1. THE KODAK CANISTER (TABUNG FILM) --- */
+        .canister-wrapper {
+            flex-shrink: 0;
+            width: 300px;
+            height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            background: #222;
+            z-index: 10;
             position: relative;
-            width: var(--book-w);
-            height: var(--book-h);
-            perspective: 1500px;
-            transform-style: preserve-3d;
+            box-shadow: 10px 0 50px rgba(0,0,0,0.8);
         }
 
-        /* HALAMAN (KERTAS) */
-        .page {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: var(--paper);
-            transform-origin: left center; /* Engsel di kiri */
-            transition: transform var(--speed) cubic-bezier(0.645, 0.045, 0.355, 1);
-            transform-style: preserve-3d;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-            cursor: pointer;
-            border-radius: 0 5px 5px 0; /* Ujung kanan tumpul dikit */
+        .canister-body {
+            width: 180px; height: 320px;
+            background: linear-gradient(90deg, #444 0%, var(--kodak-yellow) 20%, var(--kodak-yellow) 80%, #b8860b 100%);
+            border-radius: 15px;
+            position: relative;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            box-shadow: inset -10px 0 20px rgba(0,0,0,0.2), 5px 5px 15px rgba(0,0,0,0.5);
+            border: 2px solid #333;
         }
 
-        /* SISI DEPAN & BELAKANG */
-        .front, .back {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            backface-visibility: hidden; /* Sisi sebaliknya transparan */
-            padding: 30px;
-            box-sizing: border-box;
-            overflow: hidden;
+        /* Tutup Atas Bawah Tabung */
+        .canister-cap {
+            position: absolute; width: 110%; height: 30px; background: #555;
+            border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
+        .cap-top { top: -15px; background: linear-gradient(to right, #666, #999, #666); }
+        .cap-bottom { bottom: -15px; background: linear-gradient(to right, #666, #999, #666); }
 
-        .front {
-            z-index: 2;
-            /* Gradien bayangan lipatan buku (tengah) */
-            background-image: linear-gradient(to right, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 10%);
+        /* Label Kodak */
+        .brand-label {
+            width: 100%; text-align: center; color: var(--kodak-red);
+            font-family: 'Bebas Neue', cursive; font-size: 3rem; letter-spacing: 2px;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+            transform: rotate(-90deg); margin-left: -40px;
         }
-
-        .back {
-            transform: rotateY(180deg);
-            z-index: 1;
-            /* Gradien bayangan untuk sisi belakang */
-            background-image: linear-gradient(to left, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 10%);
-            border-right: 1px solid #ddd; /* Garis lipatan */
-        }
-
-        /* CLASS SAAT DIBALIK */
-        .flipped {
-            transform: rotateY(-180deg);
-        }
-
-        /* --- CONTENT STYLING --- */
-        h1 { font-family: 'Cinzel Decorative'; color: var(--text); margin: 0; line-height: 1; }
-        p { font-size: 1.1rem; line-height: 1.6; color: #444; margin-bottom: 15px; text-align: justify; }
         
-        .handwriting {
-            font-family: 'Ephesis', cursive;
-            font-size: 1.8rem;
-            color: #333;
-            line-height: 1.5;
+        .film-details {
+            position: absolute; right: 20px; bottom: 80px;
+            color: black; font-weight: bold; font-size: 0.8rem;
+            transform: rotate(-90deg);
         }
 
-        .page-number {
-            position: absolute; bottom: 15px; width: 100%; text-align: center;
-            font-size: 0.8rem; color: #999; left: 0;
+        /* Mulut Film */
+        .film-mouth {
+            position: absolute; right: -5px; top: 10%; height: 80%; width: 10px;
+            background: #111; border-radius: 0 5px 5px 0;
         }
 
-        /* DEKORASI */
-        .border-frame {
-            border: 1px solid var(--gold);
-            height: 100%; width: 100%;
-            position: absolute; top: 0; left: 0;
-            box-sizing: border-box;
-            pointer-events: none;
-            margin: 10px;
-            width: calc(100% - 20px);
-            height: calc(100% - 20px);
+        /* --- 2. THE FILM STRIP (PITA FILM) --- */
+        .film-strip {
+            display: flex;
+            height: 400px; /* Tinggi Film */
+            background-color: var(--film-black);
+            padding: 0 50px;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* MOBILE RESPONSIVE */
-        @media (max-width: 768px) {
-            :root { --book-w: 90vw; --book-h: 130vw; }
-            p { font-size: 1rem; }
-            .handwriting { font-size: 1.5rem; }
+        /* LUBANG-LUBANG FILM (PERFORATION) */
+        .film-strip::before, .film-strip::after {
+            content: '';
+            position: absolute; left: 0; width: 100%; height: 25px;
+            background-image: linear-gradient(to right, #fff 50%, transparent 50%);
+            background-size: 30px 100%; /* Jarak antar lubang */
+            opacity: 0.8;
+        }
+        .film-strip::before { top: 15px; }
+        .film-strip::after { bottom: 15px; }
+
+        /* --- 3. FRAMES (FOTO & TEKS) --- */
+        .frame {
+            flex-shrink: 0;
+            width: 450px; /* Lebar per frame */
+            height: 280px;
+            margin-right: 60px; /* Jarak antar frame */
+            background: #000;
+            border: 2px solid #333;
+            position: relative;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+            color: var(--text-white);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        /* FRAME NOMOR */
+        .frame-number {
+            position: absolute; bottom: -45px; right: 20px;
+            color: rgba(255,255,255,0.6); font-family: 'Bebas Neue'; font-size: 1.5rem;
+        }
+
+        /* STYLE FOTO */
+        .frame img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: grayscale(20%) contrast(1.1); /* Efek film */
+            transition: transform 0.5s;
+        }
+        .frame:hover img { transform: scale(1.05); filter: grayscale(0%); }
+
+        /* STYLE TEKS (SURAT) */
+        .message-content {
+            padding: 30px; text-align: justify;
+            font-size: 0.95rem; line-height: 1.7;
+            font-family: 'Montserrat';
+        }
+        .message-title {
+            font-family: 'Bebas Neue'; font-size: 2rem; color: var(--kodak-yellow);
+            margin-bottom: 10px; border-bottom: 1px solid #444; padding-bottom: 5px;
+        }
+
+        /* INTRO TEXT */
+        .intro-text {
+            color: white; width: 300px; margin-right: 50px; text-align: left;
+            opacity: 0.7; animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+        /* UJUNG FILM */
+        .film-end {
+            width: 100px; height: 100%;
+            background: linear-gradient(to right, var(--film-black), transparent);
+        }
+
+        /* AUDIO PLAYER (Hidden Style) */
+        .audio-btn {
+            position: fixed; top: 20px; right: 20px; z-index: 100;
+            background: var(--kodak-yellow); color: black; border: none;
+            padding: 10px 20px; font-weight: bold; border-radius: 20px; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 197, 0, 0.4);
         }
     </style>
 </head>
 <body>
 
-    <div style="position: fixed; bottom: 20px; color: white; font-family: sans-serif; font-size: 0.8rem; opacity: 0.7;">
-        Klik kanan halaman untuk lanjut, klik kiri halaman untuk kembali.
-    </div>
+    <button class="audio-btn" onclick="toggleAudio()">♫ PLAY MEMORIES</button>
+    <audio id="bgm" loop>
+        <source src="lagu_nostalgia.mp3" type="audio/mpeg">
+    </audio>
 
-    <div class="book" id="book">
+    <div class="scroll-container" id="scrollContainer">
         
-        <div class="page" id="p1">
-            <div class="front" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background-color: #1a1a1a; color: #fdfbf7;">
-                <div style="border: 2px solid var(--gold); padding: 20px; width: 80%;">
-                    <div style="font-size: 0.8rem; letter-spacing: 3px; margin-bottom: 10px; color: var(--gold);">SPECIAL EDITION</div>
-                    <h1 style="font-size: 4rem; color: #fff;">TETEH</h1>
-                    <div style="font-size: 1rem; margin-top: 10px; font-style: italic;">The Homecoming Issue</div>
+        <div class="canister-wrapper">
+            <div class="canister-body">
+                <div class="canister-cap cap-top"></div>
+                <div class="brand-label">KODAK</div>
+                <div class="film-details">ISO 2026<br>36 EXP</div>
+                <div class="film-mouth"></div>
+                <div class="canister-cap cap-bottom"></div>
+            </div>
+        </div>
+
+        <div class="intro-text">
+            <h2 style="margin: 0;">PULL TO OPEN >></h2>
+            <p style="font-size: 0.8rem;">Geser / Scroll ke kanan untuk menarik film</p>
+        </div>
+
+        <div class="film-strip">
+            
+            <div class="frame">
+                <div class="message-content" style="text-align: center;">
+                    <h1 style="font-size: 3rem; margin: 0; color: var(--kodak-yellow); font-family: 'Bebas Neue';">HAPPY<br>BIRTHDAY</h1>
+                    <p>TETEH • FEB 2026</p>
                 </div>
-                <div style="margin-top: 50px; font-size: 0.8rem;">FEB 2026 • VOL. 26</div>
-                <div class="page-number" style="color: #555;">Tap to Open</div>
+                <div class="frame-number">01</div>
             </div>
 
-            <div class="back">
-                <div class="border-frame"></div>
-                <div style="text-align: center; padding-top: 20px;">
-                    <h2 style="font-family: 'Cinzel Decorative'; color: var(--gold);">Dear Sister,</h2>
-                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1920&auto=format&fit=crop" style="width: 80%; height: 200px; object-fit: cover; margin: 20px 0; border: 5px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
-                    <p style="font-style: italic; font-size: 0.9rem;">
-                        "Surat ini ditulis di Indonesia, dikirim lewat sinyal, untuk dibaca di Okayama."
+            <div class="frame">
+                <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1920&auto=format&fit=crop">
+                <div class="frame-number">02</div>
+            </div>
+
+            <div class="frame">
+                <div class="message-content">
+                    <div class="message-title">Dear Teteh,</div>
+                    <p>
+                        Ulang tahun kali ini spesial banget karena dirayakan di dua tempat: 
+                        Raga Teteh di Okayama, tapi hati dan doanya penuh di rumah kita.
+                        Film ini isinya cuma potongan rindu yang belum tersampaikan.
                     </p>
                 </div>
-                <div class="page-number">1</div>
+                <div class="frame-number">03</div>
             </div>
+
+            <div class="frame">
+                <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=1887&auto=format&fit=crop">
+                <div class="frame-number">04</div>
+            </div>
+
+            <div class="frame">
+                <div class="message-content">
+                    <div class="message-title">Wait For You</div>
+                    <p>
+                        Rumah beneran sepi ga ada Teteh. Kita udah siapin makanan enak dan sofa empuk buat Teteh istirahat nanti pas pulang.
+                        Tugas Teteh sekarang cuma satu: Sehat terus di sana dan pulang dengan selamat.
+                    </p>
+                </div>
+                <div class="frame-number">05</div>
+            </div>
+
+            <div class="frame">
+                <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=2073&auto=format&fit=crop">
+                <div class="frame-number">06</div>
+            </div>
+
+            <div class="frame">
+                <div class="message-content" style="text-align: center;">
+                    <div class="message-title" style="border: none; font-size: 3rem;">WE LOVE YOU</div>
+                    <p>See you soon!</p>
+                    <div style="font-size: 3rem; margin-top: 10px;">❤</div>
+                </div>
+                <div class="frame-number">07</div>
+            </div>
+
+            <div class="film-end"></div>
         </div>
-
-        <div class="page" id="p2">
-            <div class="front">
-                <h2 style="font-family: 'Cinzel Decorative'; border-bottom: 1px solid var(--gold); padding-bottom: 10px; margin-bottom: 20px;">Chapter 1: Rindu</h2>
-                
-                <div class="handwriting">
-                    Hai Teh, Happy Birthday!<br><br>
-                    Gimana rasanya ulang tahun di negeri orang? Pasti beda ya rasanya tanpa tumpeng atau kue dari Ibu. 
-                    Jujur, di sini rasanya sepi banget ga ada suara Teteh yang heboh kalau lagi nonton drakor.
-                </div>
-
-                <div class="page-number">2</div>
-            </div>
-            <div class="back">
-                <div class="handwriting" style="margin-top: 30px;">
-                    Setiap liat kamar Teteh yang kosong, kita jadi sadar kalau rumah ini butuh "Nyawanya" buat balik lagi. 
-                    Kucing di rumah aja suka bengong nungguin di depan pintu kamar Teteh lho wkwk.
-                </div>
-                <div class="page-number">3</div>
-            </div>
-        </div>
-
-        <div class="page" id="p3">
-            <div class="front">
-                <h2 style="font-family: 'Cinzel Decorative'; border-bottom: 1px solid var(--gold); padding-bottom: 10px; margin-bottom: 20px;">Chapter 2: Pulang</h2>
-                
-                <div class="handwriting">
-                    Tapi tenang aja, bentar lagi kan Teteh pulang. <br>
-                    Kita udah siapin banyak banget cerita (dan list makanan) yang harus kita bahas bareng. 
-                    Jarak 5000 km itu bakal kalah sama hangatnya rumah.
-                </div>
-
-                <div class="page-number">4</div>
-            </div>
-            <div class="back">
-                <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=1887&auto=format&fit=crop" style="width: 100%; height: 60%; object-fit: cover; filter: sepia(0.2);">
-                <p style="margin-top: 15px; text-align: center; font-style: italic;">
-                    "Foto ini jadi bukti kalau kita ga sabar nunggu Teteh."
-                </p>
-                <div class="page-number">5</div>
-            </div>
-        </div>
-
-        <div class="page" id="p4">
-            <div class="front">
-                <h2 style="font-family: 'Cinzel Decorative'; border-bottom: 1px solid var(--gold); padding-bottom: 10px; margin-bottom: 20px;">Final Chapter</h2>
-                
-                <div class="handwriting">
-                    Sehat-sehat di sisa hari di sana ya Teh. <br>
-                    Jangan lupa makan enak, jangan terlalu forsir diri. <br>
-                    Kado terindah buat kita tahun ini cuma satu: Liat Teteh buka pintu rumah dengan selamat.
-                </div>
-
-                <div class="page-number">6</div>
-            </div>
-            
-            <div class="back" style="background-color: #1a1a1a; color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
-                <h1 style="font-size: 3rem;">THE END</h1>
-                <p style="color: #ccc; margin-top: 20px;">See you very soon.</p>
-                <div style="font-size: 4rem; margin-top: 20px; color: var(--gold);">❤</div>
-                <div style="margin-top: 50px; font-size: 0.7rem; font-family: sans-serif; opacity: 0.5;">
-                    Designed by Afdhi
-                </div>
-            </div>
-        </div>
-
     </div>
 
     <script>
-        // LOGIC OTOMATIS BIAR GAK EROR TUMPUKANNYA
-        const pages = document.querySelectorAll('.page');
-        const totalPages = pages.length;
+        // FITUR DRAG TO SCROLL (BUAT LAPTOP BIAR ENAK NARIKNYA)
+        const slider = document.getElementById('scrollContainer');
+        let isDown = false;
+        let startX;
+        let scrollLeft;
 
-        // Set z-index awal (Halaman 1 paling atas, Halaman terakhir paling bawah)
-        pages.forEach((page, index) => {
-            page.style.zIndex = totalPages - index;
+        slider.addEventListener('mousedown', (e) => {
+            isDown = true;
+            slider.style.cursor = 'grabbing';
+            startX = e.pageX - slider.offsetLeft;
+            scrollLeft = slider.scrollLeft;
         });
 
-        // Event Listener buat setiap halaman
-        pages.forEach((page, index) => {
-            page.addEventListener('click', function() {
-                if (this.classList.contains('flipped')) {
-                    // KALAU SUDAH DIBALIK -> BALIKIN LAGI KE POSISI AWAL (Tutup)
-                    this.classList.remove('flipped');
-                    
-                    // Hack z-index: Balikin z-index ke asal setelah animasi selesai
-                    setTimeout(() => {
-                        this.style.zIndex = totalPages - index;
-                    }, 500); // Sesuaikan dengan durasi transisi CSS (0.6s)
-
-                } else {
-                    // KALAU BELUM DIBALIK -> BUKA HALAMAN
-                    this.classList.add('flipped');
-                    
-                    // Hack z-index: Saat dibalik, dia harus jadi yang paling "bawah" di sisi kanan,
-                    // TAPI jadi yang paling "atas" di sisi kiri.
-                    // Solusi simpel: Biarkan z-index apa adanya, tapi tambahkan z-index manual saat "terbuka"
-                    // agar menimpa halaman sebelumnya yang sudah terbuka.
-                    
-                    let nextZ = 10 + index; // Angka sembarang tinggi biar numpuk di kiri
-                    this.style.zIndex = nextZ;
-                }
-            });
+        slider.addEventListener('mouseleave', () => {
+            isDown = false;
+            slider.style.cursor = 'grab';
         });
+
+        slider.addEventListener('mouseup', () => {
+            isDown = false;
+            slider.style.cursor = 'grab';
+        });
+
+        slider.addEventListener('mousemove', (e) => {
+            if(!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - slider.offsetLeft;
+            const walk = (x - startX) * 2; // Kecepatan scroll
+            slider.scrollLeft = scrollLeft - walk;
+        });
+
+        // AUDIO TOGGLE
+        const bgm = document.getElementById('bgm');
+        function toggleAudio() {
+            if (bgm.paused) {
+                bgm.play();
+                document.querySelector('.audio-btn').innerText = "II PAUSE";
+            } else {
+                bgm.pause();
+                document.querySelector('.audio-btn').innerText = "♫ PLAY MEMORIES";
+            }
+        }
     </script>
 </body>
 </html>
