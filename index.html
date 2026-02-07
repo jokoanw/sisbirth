@@ -3,247 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Sunday Muse: Special Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <title>TETEH Magazine: The Icon Issue</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
-        /* --- RESET & STYLE DASAR --- */
+        /* --- SETUP FASHION --- */
         :root {
-            --paper: #f4f1ea; /* Warna kertas majalah lama */
-            --ink: #2b2b2b;   /* Warna tinta hitam soft */
-            --accent: #a67c52; /* Warna coklat emas elegan */
+            --bg: #ffffff;
+            --text: #1a1a1a;
+            --accent: #c49f6a; /* Gold/Beige mahal */
         }
 
         body {
             margin: 0; padding: 0;
-            background-color: var(--paper);
-            color: var(--ink);
-            font-family: 'Lato', sans-serif;
+            background: var(--bg); color: var(--text);
+            font-family: 'Montserrat', sans-serif;
             overflow-x: hidden;
         }
 
-        /* --- TYPOGRAPHY (Editorial Style) --- */
-        h1, h2, h3 { font-family: 'Playfair Display', serif; margin: 0; }
-        
-        .magazine-header {
-            text-align: center; padding: 40px 20px;
-            border-bottom: 2px solid var(--ink);
-            margin: 0 20px;
-        }
-        .issue-date { font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; color: var(--accent); }
-        .main-title { font-size: 3.5rem; letter-spacing: -1px; line-height: 1; text-transform: uppercase; }
-        .subtitle { font-style: italic; font-size: 1.2rem; margin-top: 10px; opacity: 0.7; }
+        h1, h2, h3 { font-family: 'Cinzel Decorative', serif; text-transform: uppercase; margin: 0; }
+        img { display: block; width: 100%; height: auto; }
 
-        /* --- PARALLAX IMAGE COVER --- */
+        /* --- ANIMASI SCROLL REVEAL (Biar ga flat) --- */
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 1s cubic-bezier(0.19, 1, 0.22, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* --- SECTION 1: THE COVER (VOGUE STYLE) --- */
         .cover-section {
-            height: 80vh;
+            height: 100vh;
             position: relative;
             overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
         }
+
+        .cover-image {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            /* GANTI FOTO COVER DI SINI (Harus Portrait HD) */
+            /* Contoh pakai foto random fashion, ganti dengan foto Teteh */
+            background-image: url('https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?q=80&w=2070&auto=format&fit=crop');
+            background-position: center top;
+            background-size: cover;
+            filter: contrast(1.1) saturate(0.9); /* Filter biar cinematic */
+        }
+
+        .masthead {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            font-size: 15vw; /* Ukuran responsif raksasa */
+            line-height: 0.8; color: white; mix-blend-mode: difference; /* Efek teks nembus foto */
+            z-index: 10; letter-spacing: -5px;
+        }
+
+        .cover-lines {
+            position: absolute; bottom: 50px; left: 30px;
+            color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .headline-main {
+            font-size: 3.5rem; font-weight: 900; line-height: 1;
+            border-left: 5px solid var(--accent); padding-left: 20px; margin-bottom: 20px;
+        }
+
+        .headline-sub { font-size: 1.2rem; font-weight: 600; margin-bottom: 5px; }
+        .headline-desc { font-size: 0.9rem; opacity: 0.9; margin-bottom: 20px; max-width: 300px; }
+
+        /* --- SECTION 2: THE EDITORIAL SPREAD --- */
+        .spread-section {
+            padding: 100px 5%;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 50px;
+            align-items: center; background: #f8f8f8;
+        }
+
+        .spread-text h2 { font-size: 3rem; margin-bottom: 30px; color: var(--text); }
+        .spread-text p {
+            font-size: 1.1rem; line-height: 1.8; margin-bottom: 20px;
+            column-count: 2; /* Teks dua kolom ala majalah */
+            column-gap: 30px;
+        }
+
+        .spread-image-container { position: relative; }
+        .spread-image {
+            width: 90%; height: 600px; object-fit: cover;
+            box-shadow: -30px 30px 0 var(--accent); /* Aksen bayangan kotak */
+        }
+        .quote-overlay {
+            position: absolute; bottom: -30px; right: 0;
+            background: var(--text); color: var(--accent);
+            padding: 30px; font-size: 1.5rem; font-family: 'Cinzel Decorative', serif;
+            max-width: 300px; text-align: right;
+        }
+
+        /* --- SECTION 3: STYLE FILE (GALLERY) --- */
+        .style-file { padding: 100px 5%; }
+        .section-title { text-align: center; font-size: 2.5rem; margin-bottom: 50px; letter-spacing: 5px; }
         
-        .parallax-bg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 120%;
-            /* GANTI FOTO DI SINI: Foto portrait dia yang paling bagus/aesthetic */
-            background-image: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop');
-            background-size: cover; background-position: center;
-            z-index: -1;
-            transform: translateZ(0);
-            will-change: transform;
+        .fashion-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
         }
-
-        .cover-text {
-            color: white; text-align: center;
-            text-shadow: 0 2px 20px rgba(0,0,0,0.5);
-            z-index: 1; opacity: 0; animation: fadeUp 1.5s ease-out forwards 0.5s;
+        .grid-item { position: relative; height: 500px; overflow: hidden; }
+        .grid-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
         }
-
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- ARTICLE CONTENT --- */
-        .article-container {
-            max-width: 800px; margin: 0 auto; padding: 60px 20px;
-            text-align: justify; font-size: 1.1rem; line-height: 1.8;
-        }
-
-        .drop-cap::first-letter {
-            font-family: 'Playfair Display', serif;
-            font-size: 4rem; float: left; line-height: 0.8;
-            padding-right: 10px; color: var(--accent); font-weight: bold;
-        }
-
-        .quote-box {
-            border-top: 1px solid var(--accent); border-bottom: 1px solid var(--accent);
-            padding: 30px; margin: 40px 0; text-align: center;
-            font-family: 'Playfair Display', serif; font-size: 1.5rem; font-style: italic;
-            color: var(--accent);
-        }
-
-        /* --- PHOTO GALLERY GRID --- */
-        .gallery-section { padding: 40px 20px; background: #fff; }
-        .gallery-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .gallery-item {
-            position: relative; overflow: hidden;
-        }
-        .gallery-item img {
-            width: 100%; height: 400px; object-fit: cover;
-            transition: transform 0.5s ease; filter: grayscale(20%);
-        }
-        .gallery-item:hover img { transform: scale(1.05); filter: grayscale(0%); }
+        .grid-item:hover img { transform: scale(1.1); }
         
-        .caption {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            background: rgba(255,255,255,0.9); padding: 10px;
-            font-size: 0.9rem; text-align: center; font-style: italic;
-            transform: translateY(100%); transition: transform 0.3s;
-        }
-        .gallery-item:hover .caption { transform: translateY(0); }
-
-        /* --- FOOTER / LETTER --- */
-        .editor-note {
-            background-color: var(--ink); color: var(--paper);
-            padding: 60px 20px; text-align: center;
-        }
-        
-        .signature {
-            font-family: 'Playfair Display', serif; font-style: italic;
-            font-size: 2rem; margin-top: 30px; color: var(--accent);
+        .grid-caption {
+            position: absolute; bottom: 20px; left: 20px;
+            color: var(--text); background: white; padding: 5px 15px;
+            font-weight: bold; letter-spacing: 2px; font-size: 0.8rem;
         }
 
-        /* --- AUDIO PLAYER (Floating Minimalist) --- */
-        .audio-player {
-            position: fixed; bottom: 20px; right: 20px;
-            background: white; padding: 10px 20px; border-radius: 50px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            display: flex; align-items: center; gap: 10px; z-index: 100;
-            cursor: pointer; transition: transform 0.3s;
+        /* --- FOOTER: CREDITS --- */
+        .credits {
+            text-align: center; padding: 80px 20px;
+            background: var(--text); color: white;
         }
-        .audio-player:hover { transform: scale(1.05); }
-        .play-icon { width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 10px solid var(--ink); }
+        .role { color: var(--accent); font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 10px; }
+        .name { font-size: 1.5rem; font-weight: bold; }
 
+        /* --- RESPONSIVE (HP) --- */
+        @media (max-width: 768px) {
+            .masthead { font-size: 20vw; top: 10px; }
+            .headline-main { font-size: 2.5rem; }
+            .spread-section { grid-template-columns: 1fr; }
+            .spread-text p { column-count: 1; }
+            .spread-image { height: 400px; width: 100%; }
+            .fashion-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
-    <header class="magazine-header">
-        <div class="issue-date">VOL. 26 • FEBRUARY EDITION • SPECIAL FEATURE</div>
-        <h1 class="main-title">THE SISTER</h1>
-        <div class="subtitle">"Growing Older, Getting Wiser, Coming Home."</div>
-    </header>
-
     <section class="cover-section">
-        <div class="parallax-bg" id="bg-parallax"></div>
-        <div class="cover-text">
-            <h2 style="font-size: 4rem; margin-bottom: 10px;">HBD.</h2>
-            <p style="letter-spacing: 3px;">A VISUAL STORY</p>
-        </div>
-    </section>
-
-    <article class="article-container">
-        <h2 style="text-align: center; margin-bottom: 30px; font-size: 2rem;">Chapter: Kepulangan</h2>
+        <h1 class="masthead">TETEH</h1>
         
-        <p class="drop-cap">
-            Hanya sedikit orang yang tahu rasanya melihat waktu berjalan mundur. 
-            Bagi kami di rumah, setiap detik menuju kepulangan Teteh adalah hitungan mundur yang paling ditunggu.
-            Ulang tahun kali ini mungkin dirayakan di kejauhan, tapi rasanya tetap dekat.
-        </p>
-        <p>
-            Teteh bukan cuma sekadar kakak. Teteh adalah "Editor-in-Chief" buat keributan di rumah, 
-            penasehat gaya hidup, dan satu-satunya orang yang bisa bikin suasana rumah jadi hidup.
-            Tanpa Teteh, rumah rasanya kayak majalah tanpa gambar—sepi dan kurang warna.
-        </p>
-
-        <div class="quote-box">
-            "Jarak itu lucu. Dia memisahkan raga, tapi justru mendekatkan doa."
+        <div class="cover-image"></div>
+        
+        <div class="cover-lines reveal">
+            <div class="headline-main">THE<br>HOMECOMING<br>ISSUE.</div>
+            
+            <div class="headline-sub">TREND REPORT: JAPAN TO INDO</div>
+            <div class="headline-desc">Mengapa kepulangan Teteh adalah event paling ditunggu musim ini.</div>
+            
+            <div class="headline-sub" style="margin-top: 20px;">EXCLUSIVE: HBD SPECIAL</div>
+            <div class="headline-desc">Wawancara eksklusif dengan bintang utama kita di hari spesialnya.</div>
         </div>
+    </section>
 
-        <p>
-            Selamat ulang tahun. Terima kasih sudah berjuang hebat di negeri orang.
-            Majalah ini dibuat khusus untuk merayakan kamu, tokoh utama kami.
-            Semua halaman selanjutnya adalah tentang petualangan baru di rumah.
-        </p>
-    </article>
+    <section class="spread-section">
+        <div class="spread-image-container reveal">
+            <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=1888&auto=format&fit=crop" alt="Editorial Shot" class="spread-image">
+            <div class="quote-overlay">
+                "Jarak jauh itu nggak stylish. Pulang ke rumah itu baru timeless."
+            </div>
+        </div>
+        
+        <div class="spread-text reveal">
+            <h2>COVER STORY: <br> The Art of Missing You.</h2>
+            <p>
+                <span style="font-size: 3rem; float: left; line-height: 0.8; margin-right: 10px; font-family: 'Cinzel Decorative'; color: var(--accent);">D</span>
+                i dunia fashion, tren datang dan pergi. Tapi di dunia keluarga kita, ada satu hal yang 'selalu in-style': Kehadiran Teteh.
+                Ulang tahun kali ini dirayakan di Okayama, tapi runway sesungguhnya sedang menunggumu di rumah.
+            </p>
+            <p>
+                Kami sudah menyiapkan 'koleksi terbaru' di rumah: Kamar yang rapi, masakan Ibu yang hangat, dan keributan adik yang kangen.
+                Selamat ulang tahun, Icon kami. Stay fabulous, stay healthy, dan cepat selesaikan 'photoshoot' di Jepang. We need our main model back.
+            </p>
+        </div>
+    </section>
 
-    <section class="gallery-section">
-        <h3 style="text-align: center; margin-bottom: 30px;">ARCHIVE: BEST MOMENTS</h3>
-        <div class="gallery-grid">
-            <div class="gallery-item">
-                <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1887&auto=format&fit=crop" alt="Foto 1">
-                <div class="caption">Momen Paling Aesthetic</div>
+    <section class="style-file">
+        <h3 class="section-title reveal">STYLE FILE: EVOLUTION</h3>
+        <div class="fashion-grid reveal">
+            <div class="grid-item">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop" alt="Look 1">
+                <div class="grid-caption">THE JAPAN LOOK</div>
             </div>
-            <div class="gallery-item">
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1887&auto=format&fit=crop" alt="Foto 2">
-                <div class="caption">Candid Terbaik</div>
+            <div class="grid-item">
+                <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=1887&auto=format&fit=crop" alt="Look 2">
+                <div class="grid-caption">THE "KANGEN RUMAH" POSE</div>
             </div>
-            <div class="gallery-item">
-                <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1887&auto=format&fit=crop" alt="Foto 3">
-                <div class="caption">Edisi Kangen Rumah</div>
+            <div class="grid-item">
+                <img src="https://images.unsplash.com/photo-1618018352910-72bdafdc82a6?q=80&w=1780&auto=format&fit=crop" alt="Look 3">
+                <div class="grid-caption">GOLDEN HOUR MOMENT</div>
             </div>
         </div>
     </section>
 
-    <section class="editor-note">
-        <h2>Editor's Note</h2>
-        <p style="max-width: 600px; margin: 20px auto; opacity: 0.8;">
-            Dibuat dengan sedikit kodingan dan banyak rindu.<br>
-            Hadiah ini mungkin nggak mahal, tapi validasinya seumur hidup.<br>
-            Sehat selalu, Teh.
-        </p>
-        <div class="signature">With Love, Afdhi.</div>
-    </section>
-
-    <div class="audio-player" onclick="toggleAudio()">
-        <div class="play-icon"></div>
-        <span style="font-size: 0.8rem; font-weight: bold; letter-spacing: 1px;">PLAY MOOD</span>
-        <audio id="bgm" loop>
-            <source src="lagu_santai.mp3" type="audio/mpeg">
-        </audio>
-    </div>
+    <footer class="credits reveal">
+        <div class="role">CREATIVE DIRECTOR & BROTHER</div>
+        <div class="name">Afdhi.</div>
+        <div style="margin-top: 30px; font-size: 0.8rem; opacity: 0.6;">© 2026 FAMILY PUBLISHING. PRINTED WITH LOVE.</div>
+    </footer>
 
     <script>
-        // EFEK PARALLAX (Foto Cover bergerak saat scroll)
-        window.addEventListener('scroll', () => {
-            const scroll = window.scrollY;
-            const bg = document.getElementById('bg-parallax');
-            // Foto bergerak lebih lambat dari scroll (efek kedalaman)
-            bg.style.transform = `translate3d(0, ${scroll * 0.4}px, 0)`;
-        });
+        // SCROLL REVEAL JS SIMPLE
+        const reveals = document.querySelectorAll('.reveal');
 
-        // AUDIO TOGGLE
-        const audio = document.getElementById('bgm');
-        let isPlaying = false;
-        
-        function toggleAudio() {
-            if(isPlaying) {
-                audio.pause();
-                document.querySelector('.play-icon').style.borderLeft = "10px solid #2b2b2b";
-            } else {
-                audio.play();
-                document.querySelector('.play-icon').style.borderLeft = "10px solid #a67c52"; // Ganti warna jadi emas pas play
-            }
-            isPlaying = !isPlaying;
-        }
-
-        // FADE IN ELEMENTS ON SCROLL
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if(entry.isIntersecting) {
-                    entry.target.style.opacity = 1;
-                    entry.target.style.transform = 'translateY(0)';
+        function checkReveal() {
+            const triggerBottom = window.innerHeight * 0.85;
+            reveals.forEach(reveal => {
+                const revealTop = reveal.getBoundingClientRect().top;
+                if(revealTop < triggerBottom) {
+                    reveal.classList.add('active');
                 }
             });
-        });
+        }
 
-        // Terapkan animasi ke artikel
-        document.querySelectorAll('p, .quote-box, .gallery-item').forEach(el => {
-            el.style.opacity = 0;
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'all 0.8s ease-out';
-            observer.observe(el);
-        });
+        window.addEventListener('scroll', checkReveal);
+        // Check sekali pas load biar yang paling atas langsung muncul
+        checkReveal();
     </script>
 </body>
 </html>
