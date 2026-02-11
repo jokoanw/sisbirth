@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memory Receipt</title>
+    <title>Lia Birthday</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     
     <style>
@@ -38,7 +38,7 @@
             width: 320px;
             height: 0; /* Awalnya 0 */
             overflow: hidden;
-            transition: height 8s linear; /* Durasi nge-print (makin lama makin dramatis) */
+            transition: height 8s linear; /* Durasi nge-print */
             position: relative;
             z-index: 5;
         }
@@ -98,7 +98,6 @@
             height: 200px; /* Ukuran foto seragam */
             background: #000;
             margin-bottom: 10px;
-            /* RAHASIA STRUK ASLI: Grayscale + High Contrast */
             filter: grayscale(100%) contrast(1.3) brightness(1.1);
             border: 2px solid #222;
         }
@@ -146,21 +145,36 @@
             margin-right: auto;
         }
 
-        /* TOMBOL */
+        /* --- TOMBOL CETAK (OPSI 1: RETRO CHUNKY) --- */
         .btn-print {
-            margin-top: 30px;
-            padding: 12px 30px;
+            margin-top: 40px;
+            background: #ffdd57; /* Warna kuning retro */
+            border: 3px solid #000;
+            padding: 15px 50px; /* Lebih lebar biar gagah */
             font-family: 'VT323', monospace;
-            font-size: 1.5rem;
-            background: #fff;
-            border: none;
+            font-size: 1.8rem; /* Font lebih besar */
+            text-transform: uppercase;
             cursor: pointer;
-            box-shadow: 5px 5px 0 #000;
-            transition: 0.1s;
+            
+            /* EFEK BAYANGAN KASAR */
+            box-shadow: 8px 8px 0 #000; 
+            
+            transition: all 0.1s ease;
+            letter-spacing: 3px;
+            position: relative;
+            font-weight: bold;
+            color: #000;
         }
+
+        /* EFEK PAS DIKLIK (MENDEM) */
         .btn-print:active {
-            transform: translate(3px, 3px);
             box-shadow: 2px 2px 0 #000;
+            transform: translate(6px, 6px);
+        }
+
+        /* EFEK PAS DI-HOVER */
+        .btn-print:hover {
+            background: #ffea8a;
         }
 
     </style>
@@ -173,40 +187,40 @@
         <div class="receipt" id="content">
             
             <div class="header center">
-                <h2>TRANSACTION</h2>
+                <h2>BIRTHDAY TRANSACTION</h2>
                 <p>STORE: HEART OF AFDHI</p>
-                <p>DATE: <span id="date"></span></p>
-                <p>CUSTOMER: YOLANDA (VIP)</p>
+                <p>DATE: 10 March 2026</p>
+                <p>CUSTOMER: Lia Natalia (VVIP)</p>
             </div>
 
             <div class="dashed"></div>
 
             <div class="memory-item">
                 <div class="item-title">
-                    <span>01. THE BEGINNING</span>
+                    <span>01. TETEHKU</span>
                 </div>
                 <div class="thermal-photo">
                     <img src="foto1.jpg" alt="Memory 1">
                 </div>
                 <div class="item-caption">
-                    Ingat hari ini? Awal dari semua tawa dan cerita kita. Waktu itu aku sadar, kamu beda dari yang lain.
+                    Hii Cantik. Terima kasih sudah dan selalu menjadi kakak perempuan ku satu-satunya yang sangat begitu luar biasa. Aku selalu bersyukur untuk ini.
                 </div>
-                <div class="price-tag">PRICE: SENYUMMU</div>
+                <div class="price-tag">PRICE YOUR HUSTLE: PRICELESS</div>
             </div>
 
             <div class="dashed"></div>
 
             <div class="memory-item">
                 <div class="item-title">
-                    <span>02. RANDOM DATE</span>
+                    <span>02. WEST JAVA (MAJALENGKA)</span>
                 </div>
                 <div class="thermal-photo">
                     <img src="foto2.jpg" alt="Memory 2">
                 </div>
                 <div class="item-caption">
-                    Cuma jalan-jalan biasa, makan jajanan pinggir jalan, tapi rasanya kayak dunia milik berdua. Terima kasih udah mau diajak sederhana.
+                    Ini waktu aku ngenalin Majalengka, teteh taunya jogja terus si. Mamnya enak semua teteh kan suka. Teteh cepet pulang yah nanti aku kasi tau lagi Mjl.
                 </div>
-                <div class="price-tag">PRICE: WAKTU</div>
+                <div class="price-tag">PRICE: TIME</div>
             </div>
 
             <div class="dashed"></div>
@@ -219,37 +233,37 @@
                     <img src="foto3.jpg" alt="Memory 3">
                 </div>
                 <div class="item-caption">
-                    Selamat ulang tahun. Semoga di usia baru ini, kamu makin kuat, makin cantik, dan makin sayang sama aku (harus!).
+                    Wilujeung Tepang Taun Teteh 🩷. Di doain semoga cepat diberikan spoiler calon suami, teteh sukses dunia dan akhirat, teteh lebih banyak bahagianya, teteh hidup enak, teteh bisa banggain diri teteh dan banggain keluarga. Teteh tetep inget ada aku dan keluarga yang selalu jadi jalan pulang untuk teteh kembali ke rumah dan berkeluh kesah apapun itu. 
                 </div>
-                <div class="price-tag">PRICE: CINTAKU</div>
+                <div class="price-tag">PRICE: MY HEART</div>
             </div>
 
             <div class="dashed"></div>
 
             <div class="total-section">
                 <span>TOTAL DUE:</span>
-                <span>FOREVER</span>
+                <span>INFINITY</span>
             </div>
 
             <div class="center" style="margin-top:20px;">
-                PAID WITH LOVE<br>
+                PAID WITH YOUR HUSTLE<br>
                 *** DO NOT THROW AWAY ***
             </div>
 
             <div class="barcode"></div>
-            <div class="center" style="font-size: 0.8rem; margin-top:5px;">|| YOLANDA-2026 ||</div>
+            <div class="center" style="font-size: 0.8rem; margin-top:5px;">|| LEYA.NATA 22nd ||</div>
 
             <div style="height: 20px;"></div>
 
         </div>
     </div>
 
-    <button class="btn-print" id="btn" onclick="printReceipt()">PRINT MEMORIES 🖨️</button>
+    <button class="btn-print" id="btn" onclick="printReceipt()">PRINT MEMORIES</button>
 
     <script>
-        // Set Tanggal
-        const now = new Date();
-        document.getElementById('date').innerText = now.toLocaleDateString('id-ID').toUpperCase();
+        // Tanggal sudah manual di HTML, jadi script ini tidak diperlukan (kalau dinyalakan malah error karena id='date' tidak ada)
+        // const now = new Date();
+        // document.getElementById('date').innerText = now.toLocaleDateString('id-ID').toUpperCase();
 
         function printReceipt() {
             const paper = document.getElementById('paper');
@@ -260,7 +274,6 @@
             const h = content.scrollHeight;
 
             // Animasi (Durasi disesuaikan panjang struk)
-            // Kalau struknya panjang banget, kita perlambat
             paper.style.transition = "height 8s linear"; 
             paper.style.height = h + "px";
 
@@ -269,7 +282,7 @@
             btn.style.opacity = "0.5";
             btn.style.cursor = "not-allowed";
 
-            // Scroll otomatis ke bawah mengikuti struk (opsional, biar enak di HP)
+            // Scroll otomatis ke bawah mengikuti struk
             let scrollInterval = setInterval(() => {
                 window.scrollBy(0, 2);
             }, 20);
