@@ -3,270 +3,281 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Special Receipt</title>
+    <title>Receipt</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Barcode+128+Text&display=swap" rel="stylesheet">
-
     <style>
-        /* --- 1. RESET & BACKGROUND --- */
+        /* --- RESET --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background-color: #121212; /* Gelap Premium */
+            background-color: #222; /* Meja gelap */
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-top: 50px;
-            font-family: 'Courier Prime', monospace;
+            justify-content: flex-start;
+            padding-top: 40px;
+            font-family: 'VT323', monospace;
             overflow-x: hidden;
         }
 
-        /* --- 2. MESIN PRINTER (SLOT ATAS) --- */
-        .printer-slot {
-            width: 360px;
-            height: 20px;
-            background: #2a2a2a;
-            border-radius: 10px;
-            border-bottom: 2px solid #444;
+        /* --- PRINTER HEAD (CELAH KELUAR) --- */
+        .printer-mouth {
+            width: 340px;
+            height: 25px;
+            background: linear-gradient(to bottom, #111, #333);
+            border-radius: 5px;
+            border-bottom: 3px solid #000;
             position: relative;
-            z-index: 10; /* Printer harus di atas kertas */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            z-index: 10;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.8);
         }
 
-        /* --- 3. WADAH KERTAS (ANIMASI) --- */
-        .paper-container {
-            width: 320px;
-            /* Height 0 di awal, nanti diubah JS */
+        /* --- KERTAS STRUK (WADAH ANIMASI) --- */
+        .paper-roll {
+            width: 300px;
+            /* Awalnya 0, nanti JS yang ubah */
             height: 0; 
-            overflow: hidden; /* Konten yang belum keluar disembunyikan */
+            overflow: hidden;
+            transition: height 5s linear; /* Ngeprint pelan-pelan */
             position: relative;
-            transition: height 4s ease-in-out; /* Durasi cetak 4 detik */
-            z-index: 5; /* Di bawah printer slot */
+            z-index: 5;
         }
 
-        /* --- 4. FISIK KERTAS STRUK --- */
-        .receipt {
-            background-color: #f4f4f4; /* Warna kertas struk putih gading */
+        /* --- FISIK KERTAS --- */
+        .receipt-body {
+            background-color: #fffdf0; /* Warna kertas thermal (agak kuning dikit) */
             width: 100%;
-            padding: 30px 25px 50px 25px; /* Padding bawah gede buat gerigi */
-            color: #111;
+            padding: 20px 20px 40px 20px;
+            color: #2d2d2d; /* Tinta gak hitam pekat */
+            font-size: 1.2rem; /* Ukuran font struk standar */
+            line-height: 1.1;
             position: relative;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
             
-            /* Tekstur Kertas Halus */
-            background-image: repeating-linear-gradient(
-                0deg, transparent, transparent 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px
-            );
+            /* Tekstur Noise Kertas (Biar gak flat) */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
         }
 
-        /* Efek Gerigi Sobekan di Bawah (Jagged Edge) */
-        .receipt::after {
+        /* EFEK SOBEKAN BAWAH (JAGGED) */
+        .receipt-body::after {
             content: "";
             position: absolute;
             bottom: -10px; left: 0;
             width: 100%;
-            height: 20px;
-            background: #f4f4f4; /* Sama dengan warna kertas */
-            /* Membuat gerigi segitiga */
-            clip-path: polygon(
-                0% 0%, 5% 100%, 10% 0%, 15% 100%, 20% 0%, 25% 100%, 30% 0%, 35% 100%, 
-                40% 0%, 45% 100%, 50% 0%, 55% 100%, 60% 0%, 65% 100%, 70% 0%, 75% 100%, 
-                80% 0%, 85% 100%, 90% 0%, 95% 100%, 100% 0%
-            );
+            height: 10px;
+            background: #fffdf0;
+            /* Pola Zigzag CSS Murni */
+            background-image: linear-gradient(135deg, #222 25%, transparent 25%), 
+                              linear-gradient(225deg, #222 25%, transparent 25%);
+            background-position: 0 0;
+            background-size: 20px 20px; /* Ukuran gigi */
+            background-color: transparent; 
+            transform: rotate(180deg); /* Dibalik biar giginya ke bawah */
         }
 
-        /* --- 5. KONTEN DALAM STRUK --- */
+        /* --- KOMPONEN DALAM --- */
+        .center { text-align: center; }
+        .left { text-align: left; }
+        .right { text-align: right; }
+        .bold { font-weight: bold; }
         
-        /* Header */
-        .brand {
-            text-align: center;
-            border-bottom: 2px dashed #000;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-        .brand h1 { font-size: 1.8rem; letter-spacing: -1px; margin-bottom: 5px; text-transform: uppercase; }
-        .brand p { font-size: 0.8rem; color: #555; }
-
-        /* Meta Data (Tanggal dll) */
-        .meta {
-            font-size: 0.8rem;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        /* Foto Hitam Putih High Contrast */
-        .photo-frame {
-            width: 100%;
-            height: 280px; /* Rasio Portrait */
-            background: #000;
-            margin-bottom: 25px;
-            /* Filter biar kayak hasil cetak thermal */
-            filter: grayscale(100%) contrast(120%);
-            border: 2px solid #222;
-        }
-        .photo-frame img {
-            width: 100%; height: 100%;
-            object-fit: cover;
+        .dashed-line {
             display: block;
+            margin: 10px 0;
+            overflow: hidden;
+            white-space: nowrap;
         }
 
-        /* List Item */
-        .item-list {
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-        }
-        .item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            border-bottom: 1px dotted #ccc;
-            padding-bottom: 2px;
-        }
-        .item:last-child { border-bottom: none; font-weight: bold; margin-top: 15px; border-top: 2px solid #000; padding-top: 10px; }
-
-        /* Caption Panjang */
-        .caption {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            text-align: justify;
-            margin-bottom: 30px;
-            white-space: pre-wrap; /* Biar spasi/enter terbaca rapi */
-        }
-
-        /* Footer / Barcode */
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-        }
-        .barcode {
-            font-family: 'Libre Barcode 128 Text', cursive;
-            font-size: 3.5rem;
-            line-height: 1;
-            margin-bottom: 10px;
-        }
-        .thank-you {
-            font-size: 0.7rem;
-            text-transform: uppercase;
+        /* HEADER */
+        .store-name {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
             letter-spacing: 2px;
         }
 
-        /* --- 6. TOMBOL CETAK --- */
-        #print-btn {
-            margin-top: 40px;
-            padding: 15px 40px;
-            font-family: 'Courier Prime', monospace;
-            font-weight: bold;
-            font-size: 1rem;
-            background: #fff;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(255,255,255,0.1);
-            transition: 0.3s;
-            z-index: 20;
+        /* FOTO THERMAL STYLE */
+        .photo-box {
+            width: 100%;
+            height: 250px;
+            background: #000;
+            margin: 15px 0;
+            /* Filter Kunci: Grayscale + High Contrast + Brightness */
+            filter: grayscale(100%) contrast(1.5) brightness(1.1);
+            overflow: hidden;
+            border: 2px solid #2d2d2d;
         }
-        #print-btn:hover {
-            transform: scale(1.05);
+        .photo-box img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            /* Mix blend biar nyatu sama kertas */
+            mix-blend-mode: multiply; 
+        }
+
+        /* LIST ITEMS */
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        /* PESAN */
+        .message {
+            margin-top: 20px;
+            text-align: justify;
+            white-space: pre-wrap; /* Biar enter kebaca */
+            font-size: 1.1rem;
+        }
+
+        /* BARCODE */
+        .barcode {
+            margin-top: 25px;
+            height: 50px;
+            background: repeating-linear-gradient(
+                to right,
+                #000 0px, #000 2px,
+                transparent 2px, transparent 4px,
+                #000 4px, #000 8px
+            );
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* --- TOMBOL CETAK --- */
+        .print-btn {
+            margin-top: 30px;
+            padding: 15px 30px;
             background: #eee;
+            border: 2px solid #444;
+            font-family: 'VT323', monospace;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 #000; /* Shadow kasar */
+            transition: 0.1s;
+        }
+        .print-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #000;
         }
 
     </style>
 </head>
 <body>
 
-    <div class="printer-slot"></div>
+    <div class="printer-mouth"></div>
 
-    <div class="paper-container" id="paper">
-        <div class="receipt" id="receipt-content">
+    <div class="paper-roll" id="paper">
+        <div class="receipt-body" id="content">
             
-            <div class="brand">
-                <h1>HBD YOLANDA</h1>
-                <p>OFFICIAL LOVE RECEIPT • EST. 2026</p>
+            <div class="center">
+                <div class="store-name">CAFE OF LOVE</div>
+                <div>Jl. Hati No. 1, Purwokerto</div>
+                <div>Telp: 0813-XXXX-XXXX</div>
             </div>
 
-            <div class="meta">
-                <span id="date"></span>
-                <span>ID: #ILY-3000</span>
+            <div class="dashed-line">--------------------------------</div>
+
+            <div class="row">
+                <span>TGL: <span id="tgl"></span></span>
+                <span>JAM: <span id="jam"></span></span>
+            </div>
+            <div class="row">
+                <span>KSR: AFDHI</span>
+                <span>NO: #002702</span>
             </div>
 
-            <div class="photo-frame">
-                <img src="foto.jpg" alt="Her Photo">
+            <div class="dashed-line">--------------------------------</div>
+
+            <div class="photo-box">
+                <img src="foto.jpg" alt="Struk Foto">
             </div>
 
-            <div class="item-list">
-                <div class="item">
-                    <span>Kindness</span>
-                    <span>Unlimited</span>
-                </div>
-                <div class="item">
-                    <span>Beautiful Smile</span>
-                    <span>100%</span>
-                </div>
-                <div class="item">
-                    <span>Patience</span>
-                    <span>Extra Large</span>
-                </div>
-                <div class="item">
-                    <span>TOTAL LOVE</span>
-                    <span>INFINITE</span>
-                </div>
+            <div class="center" style="margin-bottom: 10px;">** BIRTHDAY GIRL **</div>
+
+            <div class="row">
+                <span>1x CINTA TULUS</span>
+                <span>RP 0</span>
+            </div>
+            <div class="row">
+                <span>1x KESABARAN</span>
+                <span>RP 0</span>
+            </div>
+            <div class="row">
+                <span>1x SENYUM MANIS</span>
+                <span>RP 0</span>
+            </div>
+            <div class="row">
+                <span>50kg RINDU</span>
+                <span>RP 0</span>
             </div>
 
-            <div class="caption">
+            <div class="dashed-line">--------------------------------</div>
+
+            <div class="row bold" style="font-size: 1.4rem;">
+                <span>TOTAL BAYAR</span>
+                <span>JIWAKU</span>
+            </div>
+
+            <div class="dashed-line">--------------------------------</div>
+
+            <div class="message">
 Hai Yolanda,
-
 Selamat ulang tahun.
-Terima kasih sudah lahir dan bertahan sejauh ini.
 
-Struk ini cuma kertas digital, tapi rasaku nyata. Semoga tahun ini membawa tawa yang lebih lepas, tidur yang lebih nyenyak, dan bahagia yang lebih sederhana tapi terasa cukup.
+Struk ini tidak bisa direfund, sama seperti perasaanku. Terima kasih sudah jadi variabel konstan di duniaku yang penuh ketidakpastian.
 
-Tetaplah jadi kamu.
+Semoga bahagiamu hari ini valid dan permanen.
+
+Love,
+Afdhi
             </div>
 
-            <div class="footer">
-                <div class="barcode">YOLANDA</div>
-                <p class="thank-you">*** NON-REFUNDABLE LOVE ***</p>
+            <div class="center" style="margin-top: 30px;">
+                <div>TERIMA KASIH SUDAH LAHIR</div>
+                <div>SIMPAN STRUK INI SEBAGAI BUKTI</div>
             </div>
+
+            <div class="barcode"></div>
+            <div class="center" style="font-size: 0.8rem;">||| || ||| || ||||</div>
+            
+            <div style="height: 20px;"></div>
 
         </div>
     </div>
 
-    <button id="print-btn">🖨️ CETAK UCAPAN</button>
+    <button class="print-btn" id="btn" onclick="printStruk()">TEKAN UNTUK CETAK</button>
 
     <script>
-        // SET TANGGAL HARI INI
-        const dateEl = document.getElementById('date');
+        // ISI TANGGAL
         const now = new Date();
-        dateEl.innerText = now.toLocaleDateString('id-ID', { 
-            day: 'numeric', month: 'long', year: 'numeric' 
-        });
+        document.getElementById('tgl').innerText = now.toLocaleDateString('id-ID');
+        document.getElementById('jam').innerText = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
 
-        // ANIMASI CETAK
-        const btn = document.getElementById('print-btn');
-        const paper = document.getElementById('paper');
-        const content = document.getElementById('receipt-content');
+        // FUNGSI PRINT
+        function printStruk() {
+            const paper = document.getElementById('paper');
+            const content = document.getElementById('content');
+            const btn = document.getElementById('btn');
 
-        btn.addEventListener('click', () => {
-            // 1. Ambil tinggi asli konten di dalam struk
-            const fullHeight = content.scrollHeight;
+            // Ambil tinggi asli konten
+            const h = content.scrollHeight;
 
-            // 2. Terapkan tinggi ke wadah (biar animasi jalan)
-            paper.style.height = fullHeight + "px";
-
-            // 3. Ubah tombol jadi status "Printing..."
-            btn.innerHTML = "MENCETAK...";
-            btn.style.pointerEvents = "none"; // Gak bisa diklik lagi
+            // Jalankan animasi
+            paper.style.height = h + 'px';
+            
+            // Ubah tombol
+            btn.innerText = "MENCETAK...";
+            btn.disabled = true;
             btn.style.opacity = "0.5";
+            btn.style.cursor = "default";
 
-            // 4. (Opsional) Hilangkan tombol setelah selesai
+            // Selesai (Opsional, tombol hilang)
             setTimeout(() => {
                 btn.style.display = 'none';
-            }, 4000); // 4000ms = 4 detik (sama kayak transition di CSS)
-        });
+            }, 5500);
+        }
     </script>
 
 </body>
