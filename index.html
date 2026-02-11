@@ -155,10 +155,7 @@
             font-size: 1.8rem; /* Font lebih besar */
             text-transform: uppercase;
             cursor: pointer;
-            
-            /* EFEK BAYANGAN KASAR */
             box-shadow: 8px 8px 0 #000; 
-            
             transition: all 0.1s ease;
             letter-spacing: 3px;
             position: relative;
@@ -166,13 +163,11 @@
             color: #000;
         }
 
-        /* EFEK PAS DIKLIK (MENDEM) */
         .btn-print:active {
             box-shadow: 2px 2px 0 #000;
             transform: translate(6px, 6px);
         }
 
-        /* EFEK PAS DI-HOVER */
         .btn-print:hover {
             background: #ffea8a;
         }
@@ -180,6 +175,10 @@
     </style>
 </head>
 <body>
+
+    <audio id="bg-music">
+        <source src="terbuang_dalam_waktu.mp3" type="audio/mpeg">
+    </audio>
 
     <div class="printer-head"></div>
 
@@ -261,14 +260,17 @@
     <button class="btn-print" id="btn" onclick="printReceipt()">PRINT MEMORIES</button>
 
     <script>
-        // Tanggal sudah manual di HTML, jadi script ini tidak diperlukan (kalau dinyalakan malah error karena id='date' tidak ada)
-        // const now = new Date();
-        // document.getElementById('date').innerText = now.toLocaleDateString('id-ID').toUpperCase();
-
         function printReceipt() {
             const paper = document.getElementById('paper');
             const content = document.getElementById('content');
             const btn = document.getElementById('btn');
+            const music = document.getElementById('bg-music'); // Ambil elemen audio
+
+            // 1. PLAY MUSIC
+            music.volume = 0.8; // Volume 80% biar gak kaget
+            music.play().catch(error => {
+                console.log("Autoplay dicegah browser, tapi harusnya aman karena via klik tombol.");
+            });
 
             // Hitung tinggi konten
             const h = content.scrollHeight;
