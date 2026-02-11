@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birthday Card</title>
+    <title>Birthday Greeting</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Montserrat:wght@300&display=swap" rel="stylesheet">
+    
     <style>
-        /* RESET */
+        /* --- RESET & BASIC SETUP --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
+        
         body {
-            /* Warna Background Cream/Putih Tulang biar hangat & classy */
-            background-color: #f4f1ea; 
+            /* Background luar (meja kerja) */
+            background-color: #e0e0e0; 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -20,81 +23,97 @@
             padding: 20px;
         }
 
-        /* KARTU UTAMA (Area yang bakal di-Screenshot) */
+        /* --- KARTU UTAMA (AREA SCREENSHOT) --- */
         .card {
-            background-color: #fff;
+            /* Warna kertas 'Warm White' biar aesthetic */
+            background-color: #f9f7f2; 
             width: 100%;
-            max-width: 400px; /* Ukuran pas buat Story IG/WA */
+            max-width: 400px; /* Lebar ideal HP */
             padding: 40px 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); /* Bayangan halus banget */
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); /* Bayangan lembut */
             text-align: center;
             position: relative;
-            border: 1px solid #e6e6e6; /* Garis tepi tipis */
+            border: 1px solid #fff; /* Border putih tipis di dalam */
+            outline: 1px solid #ddd; /* Garis luar tipis */
         }
 
-        /* HEADER KECIL */
-        .date {
+        /* --- BAGIAN ATAS (TANGGAL) --- */
+        .top-meta {
             font-family: 'Montserrat', sans-serif;
-            font-size: 0.7rem;
-            letter-spacing: 3px;
+            font-size: 0.65rem;
+            letter-spacing: 4px; /* Huruf renggang */
             text-transform: uppercase;
-            color: #888;
-            margin-bottom: 20px;
-            display: block;
+            color: #8a8a8a;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 15px;
+            display: inline-block;
+        }
+
+        /* --- WADAH FOTO --- */
+        .photo-frame {
+            width: 100%;
+            height: 420px; /* Tinggi foto portrait */
+            overflow: hidden;
+            margin-bottom: 30px;
+            background-color: #eee;
+            position: relative;
         }
 
         /* FOTO */
-        .photo-container {
-            width: 100%;
-            height: 450px; /* Portrait Ratio */
-            overflow: hidden;
-            margin-bottom: 30px;
-            background-color: #eee; /* Placeholder warna */
-        }
-        
-        .photo-container img {
+        .photo-frame img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Foto otomatis menyesuaikan frame */
-            filter: grayscale(20%) contrast(95%); /* Filter dikit biar estetik */
+            object-fit: cover; /* Foto menyesuaikan frame tanpa gepeng */
+            filter: sepia(10%) contrast(90%); /* Sedikit filter vintage */
+            display: block;
         }
 
-        /* JUDUL / NAMA */
+        /* --- JUDUL / UCAPAN --- */
         h1 {
-            font-weight: 600;
-            font-size: 2rem;
-            color: #222;
+            font-weight: 400;
+            font-size: 2.2rem;
+            color: #1a1a1a;
             margin-bottom: 15px;
-            line-height: 1.2;
+            line-height: 1.1;
+            letter-spacing: -0.5px;
         }
-
-        /* PESAN / UCAPAN */
-        .message {
-            font-size: 1.1rem;
-            color: #444;
-            line-height: 1.6;
+        
+        h1 span {
+            display: block;
+            font-size: 1.2rem;
+            color: #666;
             font-style: italic;
-            margin-bottom: 30px;
-            padding: 0 10px;
+            margin-top: 5px;
         }
 
-        /* FOOTER / SIGNATURE */
-        .footer {
-            border-top: 1px solid #ddd;
-            padding-top: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* --- ISI PESAN (POETRY) --- */
+        .message {
+            font-size: 1.05rem;
+            color: #4a4a4a;
+            line-height: 1.7;
+            margin-bottom: 40px;
+            padding: 0 15px;
+            font-weight: 300; /* Tipis elegan */
+        }
+
+        /* --- FOOTER / TANDA TANGAN --- */
+        .signature {
             font-family: 'Montserrat', sans-serif;
             font-size: 0.6rem;
+            letter-spacing: 2px;
             color: #999;
-            letter-spacing: 1px;
             text-transform: uppercase;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
         }
 
-        .heart-icon {
-            font-size: 1rem;
-            color: #bfa67a; /* Warna Emas Pudar */
+        .divider {
+            width: 30px;
+            height: 1px;
+            background-color: #ccc;
         }
 
     </style>
@@ -102,26 +121,33 @@
 <body>
 
     <div class="card">
-        <span class="date">EST. 1999 &mdash; FEB 2026</span>
-
-        <div class="photo-container">
-            <img src="foto.jpg" alt="Beautiful Soul">
+        
+        <div class="top-meta">
+            February 2026 &bull; Special Edition
         </div>
 
-        <h1>Yolanda Marsya U.</h1>
-
-        <p class="message">
-            "Untuk wanita yang membuat duniaku <br>
-            terasa lebih masuk akal dan penuh warna. <br>
-            Selamat bertambah usia.<br>
-            Tetaplah bersinar dengan caramu sendiri."
-        </p>
-
-        <div class="footer">
-            <span>Special Chapter</span>
-            <span class="heart-icon">✦</span>
-            <span>With Love, Afdhi</span>
+        <div class="photo-frame">
+            <img src="foto.jpg" alt="Special Person">
         </div>
+
+        <h1>
+            Happy Birthday
+            <span>Yolanda Marsya Utami</span>
+        </h1>
+
+        <div class="message">
+            "Semoga semesta selalu berkonspirasi <br>
+            untuk membuatmu tersenyum.<br>
+            Terima kasih telah menjadi alasan <br>
+            hari-hariku terasa lebih hidup."
+        </div>
+
+        <div class="signature">
+            <div class="divider"></div>
+            With Love, Afdhi
+            <div class="divider"></div>
+        </div>
+
     </div>
 
 </body>
