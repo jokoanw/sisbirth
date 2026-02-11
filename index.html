@@ -3,162 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Receipt</title>
+    <title>Memory Receipt</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     
     <style>
-        /* --- RESET --- */
+        /* RESET */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background-color: #222; /* Meja gelap */
+            background-color: #222;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            padding-top: 40px;
+            padding-top: 20px;
             font-family: 'VT323', monospace;
-            overflow-x: hidden;
+            padding-bottom: 100px;
         }
 
-        /* --- PRINTER HEAD (CELAH KELUAR) --- */
-        .printer-mouth {
-            width: 340px;
-            height: 25px;
-            background: linear-gradient(to bottom, #111, #333);
+        /* MULUT PRINTER */
+        .printer-head {
+            width: 360px;
+            height: 30px;
+            background: #1a1a1a;
+            border-bottom: 4px solid #000;
             border-radius: 5px;
-            border-bottom: 3px solid #000;
-            position: relative;
             z-index: 10;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.8);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            position: relative;
         }
 
-        /* --- KERTAS STRUK (WADAH ANIMASI) --- */
-        .paper-roll {
-            width: 300px;
-            /* Awalnya 0, nanti JS yang ubah */
-            height: 0; 
+        /* WADAH KERTAS (ANIMASI) */
+        .paper-container {
+            width: 320px;
+            height: 0; /* Awalnya 0 */
             overflow: hidden;
-            transition: height 5s linear; /* Ngeprint pelan-pelan */
+            transition: height 8s linear; /* Durasi nge-print (makin lama makin dramatis) */
             position: relative;
             z-index: 5;
         }
 
-        /* --- FISIK KERTAS --- */
-        .receipt-body {
-            background-color: #fffdf0; /* Warna kertas thermal (agak kuning dikit) */
+        /* FISIK KERTAS */
+        .receipt {
+            background-color: #f8f5e6; /* Putih Gading Kusam */
             width: 100%;
             padding: 20px 20px 40px 20px;
-            color: #2d2d2d; /* Tinta gak hitam pekat */
-            font-size: 1.2rem; /* Ukuran font struk standar */
-            line-height: 1.1;
+            color: #222;
+            font-size: 1.1rem;
             position: relative;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
-            
-            /* Tekstur Noise Kertas (Biar gak flat) */
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            /* Texture Noise Halus */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
         }
 
-        /* EFEK SOBEKAN BAWAH (JAGGED) */
-        .receipt-body::after {
+        /* GERIGI BAWAH */
+        .receipt::after {
             content: "";
             position: absolute;
             bottom: -10px; left: 0;
-            width: 100%;
-            height: 10px;
-            background: #fffdf0;
-            /* Pola Zigzag CSS Murni */
+            width: 100%; height: 10px;
+            background: #f8f5e6;
             background-image: linear-gradient(135deg, #222 25%, transparent 25%), 
                               linear-gradient(225deg, #222 25%, transparent 25%);
+            background-size: 20px 20px;
             background-position: 0 0;
-            background-size: 20px 20px; /* Ukuran gigi */
-            background-color: transparent; 
-            transform: rotate(180deg); /* Dibalik biar giginya ke bawah */
+            transform: rotate(180deg);
         }
 
-        /* --- KOMPONEN DALAM --- */
+        /* --- ELEMEN DALAM STRUK --- */
         .center { text-align: center; }
-        .left { text-align: left; }
-        .right { text-align: right; }
-        .bold { font-weight: bold; }
+        .dashed { border-bottom: 2px dashed #444; margin: 15px 0; }
+        .bold { font-weight: bold; font-size: 1.2rem; }
         
-        .dashed-line {
-            display: block;
-            margin: 10px 0;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-
         /* HEADER */
-        .store-name {
-            font-size: 1.8rem;
+        .header h2 { font-size: 2rem; letter-spacing: 2px; margin-bottom: 5px; }
+        .header p { font-size: 0.9rem; }
+
+        /* ITEM MEMORI (BLOCK) */
+        .memory-item {
+            margin-bottom: 25px;
+        }
+        
+        .item-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-transform: uppercase;
             margin-bottom: 5px;
-            letter-spacing: 2px;
+            display: flex;
+            justify-content: space-between;
         }
 
         /* FOTO THERMAL STYLE */
-        .photo-box {
+        .thermal-photo {
             width: 100%;
-            height: 250px;
+            height: 200px; /* Ukuran foto seragam */
             background: #000;
-            margin: 15px 0;
-            /* Filter Kunci: Grayscale + High Contrast + Brightness */
-            filter: grayscale(100%) contrast(1.5) brightness(1.1);
-            overflow: hidden;
-            border: 2px solid #2d2d2d;
+            margin-bottom: 10px;
+            /* RAHASIA STRUK ASLI: Grayscale + High Contrast */
+            filter: grayscale(100%) contrast(1.3) brightness(1.1);
+            border: 2px solid #222;
         }
-        .photo-box img {
+        .thermal-photo img {
             width: 100%; height: 100%;
             object-fit: cover;
-            /* Mix blend biar nyatu sama kertas */
-            mix-blend-mode: multiply; 
+            mix-blend-mode: multiply;
         }
 
-        /* LIST ITEMS */
-        .row {
-            display: flex;
-            justify-content: space-between;
+        .item-caption {
+            font-size: 1rem;
+            line-height: 1.3;
+            text-align: justify;
             margin-bottom: 5px;
         }
 
-        /* PESAN */
-        .message {
-            margin-top: 20px;
-            text-align: justify;
-            white-space: pre-wrap; /* Biar enter kebaca */
-            font-size: 1.1rem;
+        .price-tag {
+            text-align: right;
+            font-weight: bold;
+            font-size: 1rem;
         }
 
-        /* BARCODE */
+        /* TOTAL & FOOTER */
+        .total-section {
+            border-top: 2px solid #000;
+            padding-top: 10px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
         .barcode {
-            margin-top: 25px;
-            height: 50px;
+            margin-top: 30px;
+            height: 40px;
             background: repeating-linear-gradient(
                 to right,
-                #000 0px, #000 2px,
-                transparent 2px, transparent 4px,
-                #000 4px, #000 8px
+                #000 0px, #000 3px,
+                transparent 3px, transparent 6px,
+                #000 6px, #000 9px
             );
-            width: 80%;
+            width: 70%;
             margin-left: auto;
             margin-right: auto;
         }
 
-        /* --- TOMBOL CETAK --- */
-        .print-btn {
+        /* TOMBOL */
+        .btn-print {
             margin-top: 30px;
-            padding: 15px 30px;
-            background: #eee;
-            border: 2px solid #444;
+            padding: 12px 30px;
             font-family: 'VT323', monospace;
             font-size: 1.5rem;
+            background: #fff;
+            border: none;
             cursor: pointer;
-            box-shadow: 4px 4px 0 #000; /* Shadow kasar */
+            box-shadow: 5px 5px 0 #000;
             transition: 0.1s;
         }
-        .print-btn:active {
-            transform: translate(2px, 2px);
+        .btn-print:active {
+            transform: translate(3px, 3px);
             box-shadow: 2px 2px 0 #000;
         }
 
@@ -166,119 +167,119 @@
 </head>
 <body>
 
-    <div class="printer-mouth"></div>
+    <div class="printer-head"></div>
 
-    <div class="paper-roll" id="paper">
-        <div class="receipt-body" id="content">
+    <div class="paper-container" id="paper">
+        <div class="receipt" id="content">
             
-            <div class="center">
-                <div class="store-name">CAFE OF LOVE</div>
-                <div>Jl. Hati No. 1, Purwokerto</div>
-                <div>Telp: 0813-XXXX-XXXX</div>
+            <div class="header center">
+                <h2>TRANSACTION</h2>
+                <p>STORE: HEART OF AFDHI</p>
+                <p>DATE: <span id="date"></span></p>
+                <p>CUSTOMER: YOLANDA (VIP)</p>
             </div>
 
-            <div class="dashed-line">--------------------------------</div>
+            <div class="dashed"></div>
 
-            <div class="row">
-                <span>TGL: <span id="tgl"></span></span>
-                <span>JAM: <span id="jam"></span></span>
-            </div>
-            <div class="row">
-                <span>KSR: AFDHI</span>
-                <span>NO: #002702</span>
-            </div>
-
-            <div class="dashed-line">--------------------------------</div>
-
-            <div class="photo-box">
-                <img src="foto.jpg" alt="Struk Foto">
+            <div class="memory-item">
+                <div class="item-title">
+                    <span>01. THE BEGINNING</span>
+                </div>
+                <div class="thermal-photo">
+                    <img src="foto1.jpg" alt="Memory 1">
+                </div>
+                <div class="item-caption">
+                    Ingat hari ini? Awal dari semua tawa dan cerita kita. Waktu itu aku sadar, kamu beda dari yang lain.
+                </div>
+                <div class="price-tag">PRICE: SENYUMMU</div>
             </div>
 
-            <div class="center" style="margin-bottom: 10px;">** BIRTHDAY GIRL **</div>
+            <div class="dashed"></div>
 
-            <div class="row">
-                <span>1x CINTA TULUS</span>
-                <span>RP 0</span>
-            </div>
-            <div class="row">
-                <span>1x KESABARAN</span>
-                <span>RP 0</span>
-            </div>
-            <div class="row">
-                <span>1x SENYUM MANIS</span>
-                <span>RP 0</span>
-            </div>
-            <div class="row">
-                <span>50kg RINDU</span>
-                <span>RP 0</span>
+            <div class="memory-item">
+                <div class="item-title">
+                    <span>02. RANDOM DATE</span>
+                </div>
+                <div class="thermal-photo">
+                    <img src="foto2.jpg" alt="Memory 2">
+                </div>
+                <div class="item-caption">
+                    Cuma jalan-jalan biasa, makan jajanan pinggir jalan, tapi rasanya kayak dunia milik berdua. Terima kasih udah mau diajak sederhana.
+                </div>
+                <div class="price-tag">PRICE: WAKTU</div>
             </div>
 
-            <div class="dashed-line">--------------------------------</div>
+            <div class="dashed"></div>
 
-            <div class="row bold" style="font-size: 1.4rem;">
-                <span>TOTAL BAYAR</span>
-                <span>JIWAKU</span>
+            <div class="memory-item">
+                <div class="item-title">
+                    <span>03. BIRTHDAY GIRL</span>
+                </div>
+                <div class="thermal-photo">
+                    <img src="foto3.jpg" alt="Memory 3">
+                </div>
+                <div class="item-caption">
+                    Selamat ulang tahun. Semoga di usia baru ini, kamu makin kuat, makin cantik, dan makin sayang sama aku (harus!).
+                </div>
+                <div class="price-tag">PRICE: CINTAKU</div>
             </div>
 
-            <div class="dashed-line">--------------------------------</div>
+            <div class="dashed"></div>
 
-            <div class="message">
-Hai Yolanda,
-Selamat ulang tahun.
-
-Struk ini tidak bisa direfund, sama seperti perasaanku. Terima kasih sudah jadi variabel konstan di duniaku yang penuh ketidakpastian.
-
-Semoga bahagiamu hari ini valid dan permanen.
-
-Love,
-Afdhi
+            <div class="total-section">
+                <span>TOTAL DUE:</span>
+                <span>FOREVER</span>
             </div>
 
-            <div class="center" style="margin-top: 30px;">
-                <div>TERIMA KASIH SUDAH LAHIR</div>
-                <div>SIMPAN STRUK INI SEBAGAI BUKTI</div>
+            <div class="center" style="margin-top:20px;">
+                PAID WITH LOVE<br>
+                *** DO NOT THROW AWAY ***
             </div>
 
             <div class="barcode"></div>
-            <div class="center" style="font-size: 0.8rem;">||| || ||| || ||||</div>
-            
+            <div class="center" style="font-size: 0.8rem; margin-top:5px;">|| YOLANDA-2026 ||</div>
+
             <div style="height: 20px;"></div>
 
         </div>
     </div>
 
-    <button class="print-btn" id="btn" onclick="printStruk()">TEKAN UNTUK CETAK</button>
+    <button class="btn-print" id="btn" onclick="printReceipt()">PRINT MEMORIES 🖨️</button>
 
     <script>
-        // ISI TANGGAL
+        // Set Tanggal
         const now = new Date();
-        document.getElementById('tgl').innerText = now.toLocaleDateString('id-ID');
-        document.getElementById('jam').innerText = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+        document.getElementById('date').innerText = now.toLocaleDateString('id-ID').toUpperCase();
 
-        // FUNGSI PRINT
-        function printStruk() {
+        function printReceipt() {
             const paper = document.getElementById('paper');
             const content = document.getElementById('content');
             const btn = document.getElementById('btn');
 
-            // Ambil tinggi asli konten
+            // Hitung tinggi konten
             const h = content.scrollHeight;
 
-            // Jalankan animasi
-            paper.style.height = h + 'px';
-            
-            // Ubah tombol
-            btn.innerText = "MENCETAK...";
-            btn.disabled = true;
-            btn.style.opacity = "0.5";
-            btn.style.cursor = "default";
+            // Animasi (Durasi disesuaikan panjang struk)
+            // Kalau struknya panjang banget, kita perlambat
+            paper.style.transition = "height 8s linear"; 
+            paper.style.height = h + "px";
 
-            // Selesai (Opsional, tombol hilang)
+            // Ubah tombol
+            btn.innerText = "PRINTING...";
+            btn.style.opacity = "0.5";
+            btn.style.cursor = "not-allowed";
+
+            // Scroll otomatis ke bawah mengikuti struk (opsional, biar enak di HP)
+            let scrollInterval = setInterval(() => {
+                window.scrollBy(0, 2);
+            }, 20);
+
+            // Stop scroll pas selesai
             setTimeout(() => {
+                clearInterval(scrollInterval);
                 btn.style.display = 'none';
-            }, 5500);
+            }, 8000);
         }
     </script>
-
 </body>
 </html>
