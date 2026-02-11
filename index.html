@@ -3,206 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday</title>
+    <title>Birthday Card</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Montserrat:wght@300&display=swap" rel="stylesheet">
     <style>
-        /* RESET & BASIC */
+        /* RESET */
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            background-color: #000;
-            color: #fff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            height: 100vh;
+            /* Warna Background Cream/Putih Tulang biar hangat & classy */
+            background-color: #f4f1ea; 
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            min-height: 100vh;
+            font-family: 'Cormorant Garamond', serif;
+            padding: 20px;
         }
 
-        /* CONTAINER */
+        /* KARTU UTAMA (Area yang bakal di-Screenshot) */
         .card {
-            width: 90%;
-            max-width: 500px;
+            background-color: #fff;
+            width: 100%;
+            max-width: 400px; /* Ukuran pas buat Story IG/WA */
+            padding: 40px 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); /* Bayangan halus banget */
             text-align: center;
             position: relative;
+            border: 1px solid #e6e6e6; /* Garis tepi tipis */
+        }
+
+        /* HEADER KECIL */
+        .date {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 20px;
+            display: block;
         }
 
         /* FOTO */
-        .photo-frame {
+        .photo-container {
             width: 100%;
-            height: 400px; /* Tinggi foto tetap biar rapi */
-            background-color: #1a1a1a;
-            border-radius: 15px;
+            height: 450px; /* Portrait Ratio */
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .photo-frame img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Biar foto gak gepeng */
-            opacity: 0; /* Mulai dari transparan */
-            transition: opacity 1.5s ease-in-out;
-            position: absolute;
-            top: 0; left: 0;
+            margin-bottom: 30px;
+            background-color: #eee; /* Placeholder warna */
         }
         
-        .photo-frame img.active {
-            opacity: 1;
-        }
-
-        /* TEKS CAPTION */
-        .caption {
-            font-size: 1.1rem;
-            font-weight: 300;
-            min-height: 60px;
-            opacity: 0;
-            transition: opacity 1s ease;
-            color: #ccc;
-            font-style: italic;
-        }
-        .caption.active {
-            opacity: 1;
-        }
-
-        /* TOMBOL MULAI */
-        #btn-play {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            background: #fff;
-            color: #000;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            z-index: 100;
-            transition: transform 0.3s;
-        }
-        #btn-play:hover {
-            transform: translate(-50%, -50%) scale(1.1);
-        }
-
-        /* PROGRESS BAR (Opsional, biar kayak instastory) */
-        .progress-container {
+        .photo-container img {
             width: 100%;
-            height: 4px;
-            background: #333;
-            margin-bottom: 15px;
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        .progress-bar {
             height: 100%;
-            background: #fff;
-            width: 0%;
-            transition: width 0.5s linear;
+            object-fit: cover; /* Foto otomatis menyesuaikan frame */
+            filter: grayscale(20%) contrast(95%); /* Filter dikit biar estetik */
         }
+
+        /* JUDUL / NAMA */
+        h1 {
+            font-weight: 600;
+            font-size: 2rem;
+            color: #222;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        /* PESAN / UCAPAN */
+        .message {
+            font-size: 1.1rem;
+            color: #444;
+            line-height: 1.6;
+            font-style: italic;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+
+        /* FOOTER / SIGNATURE */
+        .footer {
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.6rem;
+            color: #999;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .heart-icon {
+            font-size: 1rem;
+            color: #bfa67a; /* Warna Emas Pudar */
+        }
+
     </style>
 </head>
 <body>
 
-    <audio id="musik" loop>
-        <source src="musik.mp3" type="audio/mpeg">
-    </audio>
-
     <div class="card">
-        <div class="progress-container">
-            <div class="progress-bar" id="progress"></div>
+        <span class="date">EST. 1999 &mdash; FEB 2026</span>
+
+        <div class="photo-container">
+            <img src="foto.jpg" alt="Beautiful Soul">
         </div>
 
-        <div class="photo-frame">
-            <img id="display-img" src="" alt="Moment">
+        <h1>Yolanda Marsya U.</h1>
+
+        <p class="message">
+            "Untuk wanita yang membuat duniaku <br>
+            terasa lebih masuk akal dan penuh warna. <br>
+            Selamat bertambah usia.<br>
+            Tetaplah bersinar dengan caramu sendiri."
+        </p>
+
+        <div class="footer">
+            <span>Special Chapter</span>
+            <span class="heart-icon">✦</span>
+            <span>With Love, Afdhi</span>
         </div>
-
-        <p class="caption" id="display-text"></p>
-
-        <button id="btn-play">Putar Kenangan</button>
     </div>
 
-    <script>
-        // --- KONFIGURASI DATA (EDIT DI SINI) ---
-        // Afdhi, ini mirip list di Python. Kamu isi foto & teksnya di sini.
-        // Pastikan nama file foto sesuai dengan yang ada di folder kamu.
-        const slides = [
-            {
-                foto: "foto1.jpg", 
-                teks: "Hai Yolanda, selamat ulang tahun..."
-            },
-            {
-                foto: "foto2.jpg", 
-                teks: "Inget nggak waktu kita jalan ke sini? Salah satu hari favoritku."
-            },
-            {
-                foto: "foto3.jpg", 
-                teks: "Terima kasih sudah jadi orang yang paling mengerti aku."
-            },
-            {
-                foto: "foto4.jpg", 
-                teks: "Semoga tahun ini membawa lebih banyak tawa dan bahagia buat kamu."
-            },
-            {
-                foto: "foto_terakhir.jpg", 
-                teks: "I love you, now and always. ❤️"
-            }
-        ];
-
-        // --- LOGIKA PROGRAM ---
-        const imgElement = document.getElementById('display-img');
-        const textElement = document.getElementById('display-text');
-        const btnPlay = document.getElementById('btn-play');
-        const audio = document.getElementById('musik');
-        const progressBar = document.getElementById('progress');
-
-        let currentIndex = 0;
-
-        function showSlide(index) {
-            // 1. Fade Out dulu
-            imgElement.classList.remove('active');
-            textElement.classList.remove('active');
-
-            setTimeout(() => {
-                // 2. Ganti konten saat opacity 0
-                imgElement.src = slides[index].foto;
-                textElement.innerText = slides[index].teks;
-
-                // 3. Fade In
-                imgElement.classList.add('active');
-                textElement.classList.add('active');
-
-                // Update Progress Bar
-                let percent = ((index + 1) / slides.length) * 100;
-                progressBar.style.width = percent + '%';
-
-            }, 1000); // Tunggu 1 detik (sesuai durasi transisi CSS)
-        }
-
-        function nextSlide() {
-            if (currentIndex < slides.length - 1) {
-                currentIndex++;
-                showSlide(currentIndex);
-            } else {
-                // Kalau sudah slide terakhir, stop interval (biar stay di foto terakhir)
-                // Atau kalau mau looping ulang, set currentIndex = 0
-                console.log("Selesai");
-            }
-        }
-
-        // Event Listener Tombol Mulai
-        btnPlay.addEventListener('click', () => {
-            btnPlay.style.display = 'none'; // Hilangkan tombol
-            audio.play(); // Putar musik
-            
-            // Tampilkan slide pertama
-            showSlide(0);
-
-            // Ganti slide setiap 5 detik
-            setInterval(nextSlide, 5000); 
-        });
-
-    </script>
 </body>
 </html>
