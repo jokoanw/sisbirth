@@ -3,152 +3,295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birthday Greeting</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Montserrat:wght@300&display=swap" rel="stylesheet">
+    <title>Receipt for Yolanda</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* --- RESET & BASIC SETUP --- */
+        /* --- RESET & BASIC --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            /* Background luar (meja kerja) */
-            background-color: #e0e0e0; 
+            background-color: #222; /* Background gelap biar fokus ke struk */
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: flex-start;
             min-height: 100vh;
-            font-family: 'Cormorant Garamond', serif;
+            padding-top: 50px;
+            font-family: 'Inconsolata', monospace;
+            overflow-x: hidden;
+        }
+
+        /* --- PRINTER MACHINE (GENITNYA) --- */
+        .printer-body {
+            width: 340px;
+            height: 60px;
+            background: #333;
+            border-radius: 10px;
+            position: relative;
+            z-index: 10; /* Printer harus di atas struk */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 5px solid #1a1a1a;
+        }
+
+        /* Lampu Indikator Printer */
+        .led {
+            width: 10px;
+            height: 10px;
+            background-color: #ff4d4d; /* Merah (Standby) */
+            border-radius: 50%;
+            position: absolute;
+            right: 20px;
+            box-shadow: 0 0 5px #ff4d4d;
+            transition: 0.3s;
+        }
+        .led.on {
+            background-color: #00ff00; /* Hijau (Printing) */
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        /* Lubang Kertas */
+        .slot {
+            width: 280px;
+            height: 8px;
+            background: #000;
+            border-radius: 4px;
+        }
+
+        /* --- STRUK / RECEIPT --- */
+        .receipt-container {
+            position: relative;
+            width: 300px;
+            /* Awalnya tersembunyi/pendek */
+            height: 0; 
+            overflow: hidden; 
+            transition: height 6s linear; /* Animasi mencetak selama 6 detik */
+            z-index: 5; /* Di bawah printer */
+            margin-top: -10px; /* Biar nyambung sama lubang printer */
+        }
+
+        .receipt {
+            background-color: #fff;
+            width: 100%;
             padding: 20px;
+            color: #000;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            /* Efek kertas bergerigi di bawah */
+            background-image: radial-gradient(circle, transparent 70%, #fff 75%);
+            background-size: 10px 10px;
+            position: relative;
         }
 
-        /* --- KARTU UTAMA (AREA SCREENSHOT) --- */
-        .card {
-            /* Warna kertas 'Warm White' biar aesthetic */
-            background-color: #f9f7f2; 
+        /* Efek Gerigi Bawah (Zigzag) */
+        .receipt::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
             width: 100%;
-            max-width: 400px; /* Lebar ideal HP */
-            padding: 40px 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); /* Bayangan lembut */
+            height: 10px;
+            background: 
+                linear-gradient(45deg, transparent 33.333%, #fff 33.333%, #fff 66.667%, transparent 66.667%),
+                linear-gradient(-45deg, transparent 33.333%, #fff 33.333%, #fff 66.667%, transparent 66.667%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 0; /* Membuat efek zigzag */
+        }
+
+        /* --- KONTEN DALAM STRUK --- */
+        .header {
             text-align: center;
-            position: relative;
-            border: 1px solid #fff; /* Border putih tipis di dalam */
-            outline: 1px solid #ddd; /* Garis luar tipis */
+            border-bottom: 2px dashed #000;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
         }
+        .header h2 { font-size: 1.5rem; letter-spacing: 2px; }
+        .header p { font-size: 0.8rem; color: #555; }
 
-        /* --- BAGIAN ATAS (TANGGAL) --- */
-        .top-meta {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.65rem;
-            letter-spacing: 4px; /* Huruf renggang */
-            text-transform: uppercase;
-            color: #8a8a8a;
-            margin-bottom: 25px;
-            border-bottom: 1px solid #e5e5e5;
-            padding-bottom: 15px;
-            display: inline-block;
-        }
-
-        /* --- WADAH FOTO --- */
-        .photo-frame {
+        /* FOTO ALA STRUK (Hitam Putih & High Contrast) */
+        .photo-area {
             width: 100%;
-            height: 420px; /* Tinggi foto portrait */
-            overflow: hidden;
-            margin-bottom: 30px;
-            background-color: #eee;
-            position: relative;
+            height: 200px;
+            margin-bottom: 15px;
+            filter: grayscale(100%) contrast(120%) brightness(110%);
+            border: 2px solid #000;
         }
-
-        /* FOTO */
-        .photo-frame img {
+        .photo-area img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Foto menyesuaikan frame tanpa gepeng */
-            filter: sepia(10%) contrast(90%); /* Sedikit filter vintage */
-            display: block;
+            object-fit: cover;
         }
 
-        /* --- JUDUL / UCAPAN --- */
-        h1 {
-            font-weight: 400;
-            font-size: 2.2rem;
-            color: #1a1a1a;
+        /* DAFTAR ITEM */
+        .item-list {
+            width: 100%;
             margin-bottom: 15px;
-            line-height: 1.1;
-            letter-spacing: -0.5px;
+            font-size: 0.9rem;
         }
-        
-        h1 span {
-            display: block;
-            font-size: 1.2rem;
-            color: #666;
-            font-style: italic;
-            margin-top: 5px;
-        }
-
-        /* --- ISI PESAN (POETRY) --- */
-        .message {
-            font-size: 1.05rem;
-            color: #4a4a4a;
-            line-height: 1.7;
-            margin-bottom: 40px;
-            padding: 0 15px;
-            font-weight: 300; /* Tipis elegan */
-        }
-
-        /* --- FOOTER / TANDA TANGAN --- */
-        .signature {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.6rem;
-            letter-spacing: 2px;
-            color: #999;
-            text-transform: uppercase;
+        .item {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .price { font-weight: bold; }
+
+        /* GARIS PEMBATAS */
+        .divider {
+            border-top: 1px dashed #000;
+            margin: 10px 0;
         }
 
-        .divider {
-            width: 30px;
-            height: 1px;
-            background-color: #ccc;
+        /* CAPTION PANJANG */
+        .long-caption {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            text-align: justify;
+            margin-bottom: 20px;
+            white-space: pre-wrap; /* Biar enter terbaca */
+        }
+
+        /* TOTAL & BARCODE */
+        .total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .barcode {
+            font-family: 'Libre Barcode 39', cursive; /* Fallback kalau font barcode gak load */
+            font-size: 2rem;
+            text-align: center;
+            letter-spacing: 5px;
+            opacity: 0.8;
+            transform: scaleY(0.5); /* Biar gepeng kayak barcode */
+        }
+        .thank-you {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        /* --- TOMBOL CETAK --- */
+        #print-btn {
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: #fff;
+            border: none;
+            border-radius: 5px;
+            font-family: 'Inconsolata', monospace;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255,255,255,0.2);
+            transition: 0.3s;
+            z-index: 20;
+        }
+        #print-btn:hover {
+            background: #ddd;
+            transform: scale(1.05);
         }
 
     </style>
 </head>
 <body>
 
-    <div class="card">
-        
-        <div class="top-meta">
-            February 2026 &bull; Special Edition
-        </div>
-
-        <div class="photo-frame">
-            <img src="foto.jpg" alt="Special Person">
-        </div>
-
-        <h1>
-            Happy Birthday
-            <span>Yolanda Marsya Utami</span>
-        </h1>
-
-        <div class="message">
-            "Semoga semesta selalu berkonspirasi <br>
-            untuk membuatmu tersenyum.<br>
-            Terima kasih telah menjadi alasan <br>
-            hari-hariku terasa lebih hidup."
-        </div>
-
-        <div class="signature">
-            <div class="divider"></div>
-            With Love, Afdhi
-            <div class="divider"></div>
-        </div>
-
+    <div class="printer-body">
+        <div class="slot"></div>
+        <div class="led" id="led"></div>
     </div>
 
+    <div class="receipt-container" id="paper-roll">
+        <div class="receipt" id="receipt-content">
+            
+            <div class="header">
+                <h2>HAPPY BIRTHDAY</h2>
+                <p>Date: 2026-02-?? &bull; Time: Forever</p>
+                <p>Location: My Heart</p>
+            </div>
+
+            <div class="photo-area">
+                <img src="foto.jpg" alt="Special Person">
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="item-list">
+                <div class="item">
+                    <span>1x Beautiful Smile</span>
+                    <span class="price">$ Priceless</span>
+                </div>
+                <div class="item">
+                    <span>1x Kindness</span>
+                    <span class="price">$ Priceless</span>
+                </div>
+                <div class="item">
+                    <span>1x Patience</span>
+                    <span class="price">$ Priceless</span>
+                </div>
+                <div class="item">
+                    <span>100% Unconditional Love</span>
+                    <span class="price">$ Free</span>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="long-caption">
+Hai Yolanda,
+Selamat ulang tahun ya.
+
+Ini cuma struk digital sederhana, tapi isinya adalah hal-hal yang gak bisa dibeli dengan uang. Terima kasih sudah jadi partner terbaik, pendengar setia, dan alasan aku tersenyum tahun ini.
+
+Semoga di usia barumu, kamu selalu dikelilingi kebahagiaan, persis seperti kebahagiaan yang selalu kamu bawa buat aku.
+
+I love you, more than words can say on this receipt.
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="total">
+                <span>TOTAL LOVE:</span>
+                <span>INFINITE</span>
+            </div>
+
+            <div class="barcode">
+                || ||| || |||| || |||
+            </div>
+            <p class="thank-you">*** THANK YOU FOR BEING BORN ***</p>
+
+            <div style="height: 20px;"></div>
+        </div>
+    </div>
+
+    <button id="print-btn">🖨️ PRINT RECEIPT</button>
+
+    <script>
+        const btn = document.getElementById('print-btn');
+        const paperRoll = document.getElementById('paper-roll');
+        const receiptContent = document.getElementById('receipt-content');
+        const led = document.getElementById('led');
+
+        btn.addEventListener('click', () => {
+            // 1. Tombol hilang
+            btn.style.display = 'none';
+
+            // 2. Lampu jadi hijau (Nge-print)
+            led.classList.add('on');
+
+            // 3. Hitung tinggi konten asli struk biar animasinya pas
+            const fullHeight = receiptContent.offsetHeight + 20; // +20 buat margin zigzag
+            
+            // 4. Jalankan animasi (set height container sesuai konten)
+            paperRoll.style.height = fullHeight + 'px';
+
+            // 5. Setelah selesai (misal 6 detik), lampu balik merah (opsional)
+            setTimeout(() => {
+                led.classList.remove('on');
+            }, 6000);
+        });
+    </script>
 </body>
 </html>
