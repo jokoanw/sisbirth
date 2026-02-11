@@ -3,295 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Receipt for Yolanda</title>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <title>For Yolanda</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Pinyon+Script&family=Quicksand:wght@300;400&display=swap" rel="stylesheet">
     
     <style>
-        /* --- RESET & BASIC --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        /* --- 1. SETTING DASAR & ESTETIKA --- */
+        :root {
+            --bg-color: #0a0a0a;
+            --text-color: #e0e0e0;
+            --accent-color: #d4af37; /* Warna Emas Mewah */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; /* Kursor asli disembunyikan */ }
+
         body {
-            background-color: #222; /* Background gelap biar fokus ke struk */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            min-height: 100vh;
-            padding-top: 50px;
-            font-family: 'Inconsolata', monospace;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Quicksand', sans-serif;
             overflow-x: hidden;
         }
 
-        /* --- PRINTER MACHINE (GENITNYA) --- */
-        .printer-body {
-            width: 340px;
-            height: 60px;
-            background: #333;
-            border-radius: 10px;
-            position: relative;
-            z-index: 10; /* Printer harus di atas struk */
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 5px solid #1a1a1a;
+        /* Efek Grain (Bintik-bintik Film) */
+        .grain {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("https://upload.wikimedia.org/wikipedia/commons/7/76/Noise_overlay_image.png");
+            background-repeat: repeat;
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 999;
         }
 
-        /* Lampu Indikator Printer */
-        .led {
-            width: 10px;
-            height: 10px;
-            background-color: #ff4d4d; /* Merah (Standby) */
+        /* Custom Cursor (Lingkaran Kecil) */
+        .cursor {
+            width: 20px; height: 20px;
+            border: 1px solid var(--text-color);
             border-radius: 50%;
-            position: absolute;
-            right: 20px;
-            box-shadow: 0 0 5px #ff4d4d;
-            transition: 0.3s;
-        }
-        .led.on {
-            background-color: #00ff00; /* Hijau (Printing) */
-            box-shadow: 0 0 10px #00ff00;
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            transition: transform 0.1s;
+            mix-blend-mode: difference;
         }
 
-        /* Lubang Kertas */
-        .slot {
-            width: 280px;
-            height: 8px;
-            background: #000;
-            border-radius: 4px;
-        }
-
-        /* --- STRUK / RECEIPT --- */
-        .receipt-container {
-            position: relative;
-            width: 300px;
-            /* Awalnya tersembunyi/pendek */
-            height: 0; 
-            overflow: hidden; 
-            transition: height 6s linear; /* Animasi mencetak selama 6 detik */
-            z-index: 5; /* Di bawah printer */
-            margin-top: -10px; /* Biar nyambung sama lubang printer */
-        }
-
-        .receipt {
-            background-color: #fff;
-            width: 100%;
-            padding: 20px;
-            color: #000;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            /* Efek kertas bergerigi di bawah */
-            background-image: radial-gradient(circle, transparent 70%, #fff 75%);
-            background-size: 10px 10px;
-            position: relative;
-        }
-
-        /* Efek Gerigi Bawah (Zigzag) */
-        .receipt::after {
-            content: "";
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 100%;
-            height: 10px;
-            background: 
-                linear-gradient(45deg, transparent 33.333%, #fff 33.333%, #fff 66.667%, transparent 66.667%),
-                linear-gradient(-45deg, transparent 33.333%, #fff 33.333%, #fff 66.667%, transparent 66.667%);
-            background-size: 20px 20px;
-            background-position: 0 0, 10px 0; /* Membuat efek zigzag */
-        }
-
-        /* --- KONTEN DALAM STRUK --- */
-        .header {
-            text-align: center;
-            border-bottom: 2px dashed #000;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-        .header h2 { font-size: 1.5rem; letter-spacing: 2px; }
-        .header p { font-size: 0.8rem; color: #555; }
-
-        /* FOTO ALA STRUK (Hitam Putih & High Contrast) */
-        .photo-area {
-            width: 100%;
-            height: 200px;
-            margin-bottom: 15px;
-            filter: grayscale(100%) contrast(120%) brightness(110%);
-            border: 2px solid #000;
-        }
-        .photo-area img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* DAFTAR ITEM */
-        .item-list {
-            width: 100%;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-        }
-        .item {
+        /* --- 2. STRUKTUR SCROLL (TIAP BAGIAN ADALAH 1 LAYAR) --- */
+        section {
+            min-height: 100vh; /* Satu layar penuh */
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-        .price { font-weight: bold; }
-
-        /* GARIS PEMBATAS */
-        .divider {
-            border-top: 1px dashed #000;
-            margin: 10px 0;
-        }
-
-        /* CAPTION PANJANG */
-        .long-caption {
-            font-size: 0.85rem;
-            line-height: 1.4;
-            text-align: justify;
-            margin-bottom: 20px;
-            white-space: pre-wrap; /* Biar enter terbaca */
-        }
-
-        /* TOTAL & BARCODE */
-        .total {
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        .barcode {
-            font-family: 'Libre Barcode 39', cursive; /* Fallback kalau font barcode gak load */
-            font-size: 2rem;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
+            padding: 50px;
+            position: relative;
+            opacity: 0; /* Awalnya hilang */
+            transform: translateY(50px); /* Awalnya agak ke bawah */
+            transition: all 1.5s ease-out; /* Animasi muncul pelan banget */
+        }
+
+        /* Kelas untuk memunculkan elemen saat di-scroll */
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- 3. TYPOGRAPHY & ELEMEN --- */
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
             letter-spacing: 5px;
-            opacity: 0.8;
-            transform: scaleY(0.5); /* Biar gepeng kayak barcode */
-        }
-        .thank-you {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 0.8rem;
             text-transform: uppercase;
+            margin-bottom: 20px;
+            color: var(--accent-color);
         }
 
-        /* --- TOMBOL CETAK --- */
-        #print-btn {
-            margin-top: 30px;
-            padding: 12px 30px;
-            background: #fff;
-            border: none;
-            border-radius: 5px;
-            font-family: 'Inconsolata', monospace;
-            font-size: 1.1rem;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(255,255,255,0.2);
-            transition: 0.3s;
-            z-index: 20;
+        .script-font {
+            font-family: 'Pinyon Script', cursive;
+            font-size: 2.5rem;
+            color: #fff;
+            margin-top: -20px;
+            display: block;
         }
-        #print-btn:hover {
-            background: #ddd;
-            transform: scale(1.05);
+
+        p {
+            font-size: 1.1rem;
+            line-height: 2;
+            max-width: 600px;
+            color: #aaa;
+            margin-top: 20px;
+        }
+
+        /* BINGKAI FOTO MEWAH */
+        .photo-frame {
+            width: 300px; /* Lebar foto */
+            height: 450px; /* Tinggi foto */
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(212, 175, 55, 0.3); /* Garis emas tipis */
+            margin: 30px 0;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        .photo-frame img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(110%); /* Foto Hitam Putih Elegan */
+            transition: transform 10s ease; /* Zoom in pelan banget */
+        }
+
+        section.visible .photo-frame img {
+            transform: scale(1.1); /* Efek zoom saat muncul */
+        }
+
+        /* MUSIK PLAYER MINIMALIS */
+        .music-control {
+            position: fixed;
+            bottom: 30px; right: 30px;
+            z-index: 1000;
+            background: transparent;
+            border: 1px solid var(--text-color);
+            color: var(--text-color);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            cursor: none; /* Pakai custom cursor */
+            opacity: 0.5;
+            transition: 0.3s;
+        }
+        .music-control:hover { opacity: 1; background: rgba(255,255,255,0.1); }
+
+        /* SCROLL INDICATOR */
+        .scroll-down {
+            position: absolute;
+            bottom: 30px;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            animation: bounce 2s infinite;
+            opacity: 0.7;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        /* GARIS PEMISAH FISIKA */
+        .line {
+            width: 1px;
+            height: 100px;
+            background: linear-gradient(to bottom, transparent, var(--accent-color), transparent);
+            margin: 40px 0;
         }
 
     </style>
 </head>
 <body>
+    
+    <audio id="bg-music" loop>
+        <source src="musik.mp3" type="audio/mpeg">
+    </audio>
 
-    <div class="printer-body">
-        <div class="slot"></div>
-        <div class="led" id="led"></div>
-    </div>
+    <div class="grain"></div>
+    <div class="cursor" id="cursor"></div>
+    <button class="music-control" onclick="toggleMusic()">PLAY MUSIC</button>
 
-    <div class="receipt-container" id="paper-roll">
-        <div class="receipt" id="receipt-content">
-            
-            <div class="header">
-                <h2>HAPPY BIRTHDAY</h2>
-                <p>Date: 2026-02-?? &bull; Time: Forever</p>
-                <p>Location: My Heart</p>
-            </div>
+    <section>
+        <h1>The Muse</h1>
+        <span class="script-font">Yolanda Marsya Utami</span>
+        <div class="line"></div>
+        <p>A Digital Exhibition of a Beautiful Soul.</p>
+        <div class="scroll-down">SCROLL SLOWLY</div>
+    </section>
 
-            <div class="photo-area">
-                <img src="foto.jpg" alt="Special Person">
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="item-list">
-                <div class="item">
-                    <span>1x Beautiful Smile</span>
-                    <span class="price">$ Priceless</span>
-                </div>
-                <div class="item">
-                    <span>1x Kindness</span>
-                    <span class="price">$ Priceless</span>
-                </div>
-                <div class="item">
-                    <span>1x Patience</span>
-                    <span class="price">$ Priceless</span>
-                </div>
-                <div class="item">
-                    <span>100% Unconditional Love</span>
-                    <span class="price">$ Free</span>
-                </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="long-caption">
-Hai Yolanda,
-Selamat ulang tahun ya.
-
-Ini cuma struk digital sederhana, tapi isinya adalah hal-hal yang gak bisa dibeli dengan uang. Terima kasih sudah jadi partner terbaik, pendengar setia, dan alasan aku tersenyum tahun ini.
-
-Semoga di usia barumu, kamu selalu dikelilingi kebahagiaan, persis seperti kebahagiaan yang selalu kamu bawa buat aku.
-
-I love you, more than words can say on this receipt.
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="total">
-                <span>TOTAL LOVE:</span>
-                <span>INFINITE</span>
-            </div>
-
-            <div class="barcode">
-                || ||| || |||| || |||
-            </div>
-            <p class="thank-you">*** THANK YOU FOR BEING BORN ***</p>
-
-            <div style="height: 20px;"></div>
+    <section>
+        <div class="photo-frame">
+            <img src="foto1.jpg" alt="Her Portrait">
         </div>
-    </div>
+        <p>
+            "Dalam fisika, waktu itu relatif.<br>
+            Tapi saat bersamamu, waktu seolah berhenti.<br>
+            Kamu adalah konstanta di dunia yang penuh variabel."
+        </p>
+    </section>
 
-    <button id="print-btn">🖨️ PRINT RECEIPT</button>
+    <section>
+        <h1>XXVII . II</h1> <p>
+            Hari ini bukan sekadar pergantian angka.<br>
+            Ini adalah perayaan keberadaanmu.<br>
+            Terima kasih telah bertahan, tumbuh, dan menjadi indah<br>
+            dengan caramu sendiri.
+        </p>
+        <div class="line"></div>
+    </section>
+
+    <section>
+        <div class="photo-frame" style="width: 400px; height: 300px;"> <img src="foto2.jpg" alt="Us">
+        </div>
+        <span class="script-font">Happy Birthday, Love.</span>
+        <p style="margin-bottom: 50px;">
+            I will always be your biggest fan.<br>
+            With Love, Afdhi.
+        </p>
+    </section>
 
     <script>
-        const btn = document.getElementById('print-btn');
-        const paperRoll = document.getElementById('paper-roll');
-        const receiptContent = document.getElementById('receipt-content');
-        const led = document.getElementById('led');
-
-        btn.addEventListener('click', () => {
-            // 1. Tombol hilang
-            btn.style.display = 'none';
-
-            // 2. Lampu jadi hijau (Nge-print)
-            led.classList.add('on');
-
-            // 3. Hitung tinggi konten asli struk biar animasinya pas
-            const fullHeight = receiptContent.offsetHeight + 20; // +20 buat margin zigzag
-            
-            // 4. Jalankan animasi (set height container sesuai konten)
-            paperRoll.style.height = fullHeight + 'px';
-
-            // 5. Setelah selesai (misal 6 detik), lampu balik merah (opsional)
-            setTimeout(() => {
-                led.classList.remove('on');
-            }, 6000);
+        // --- 1. LOGIKA CUSTOM CURSOR ---
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
         });
+
+        // --- 2. LOGIKA SCROLL ANIMATION (INTERSECTION OBSERVER) ---
+        // Ini yang bikin elemen muncul pelan-pelan saat di-scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.3 }); // Muncul saat 30% elemen terlihat
+
+        document.querySelectorAll('section').forEach(sec => {
+            observer.observe(sec);
+        });
+
+        // --- 3. LOGIKA MUSIK ---
+        const music = document.getElementById('bg-music');
+        const btn = document.querySelector('.music-control');
+        
+        function toggleMusic() {
+            if (music.paused) {
+                music.play();
+                btn.innerText = "PAUSE MUSIC";
+                btn.style.opacity = "1";
+            } else {
+                music.pause();
+                btn.innerText = "PLAY MUSIC";
+                btn.style.opacity = "0.5";
+            }
+        }
     </script>
 </body>
 </html>
