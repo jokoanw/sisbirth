@@ -176,7 +176,7 @@
 </head>
 <body>
 
-    <audio id="bg-music">
+    <audio id="bg-music" loop>
         <source src="terbuang_dalam_waktu.mp3" type="audio/mpeg">
     </audio>
 
@@ -264,13 +264,25 @@
             const paper = document.getElementById('paper');
             const content = document.getElementById('content');
             const btn = document.getElementById('btn');
-            const music = document.getElementById('bg-music'); // Ambil elemen audio
+            const music = document.getElementById('bg-music'); 
 
-            // 1. PLAY MUSIC
-            music.volume = 0.8; // Volume 80% biar gak kaget
+            // --- REVISI: EFEK FADE IN AUDIO ---
+            music.volume = 0; // Mulai dari suara 0 (hening)
             music.play().catch(error => {
-                console.log("Autoplay dicegah browser, tapi harusnya aman karena via klik tombol.");
+                console.log("Audio autoplay blocked, user interaction needed.");
             });
+
+            // Logika Fade In: Naikkan volume pelan-pelan sampai 0.8
+            let vol = 0;
+            const targetVol = 0.8; 
+            const fadeInterval = setInterval(() => {
+                if (vol < targetVol) {
+                    vol += 0.01; // Naik 1% setiap loop
+                    music.volume = Math.min(vol, targetVol);
+                } else {
+                    clearInterval(fadeInterval); // Stop kalau sudah max
+                }
+            }, 50); // Loop setiap 50ms (Sangat smooth, durasi total sekitar 4 detik)
 
             // Hitung tinggi konten
             const h = content.scrollHeight;
