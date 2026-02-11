@@ -3,212 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HBD Spesial</title>
+    <title>Happy Birthday</title>
     <style>
         /* RESET & BASIC */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background-color: #0a0a0a; /* Hitam pekat tapi lembut */
-            color: #e0e0e0;
-            font-family: 'Courier New', Courier, monospace; /* Font mesin tik */
+            background-color: #000;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            flex-direction: column;
         }
 
-        /* STARS BACKGROUND (ANIMASI FISIKA SEDERHANA) */
-        .stars {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            opacity: 0.5;
-            animation: twinkle var(--duration) infinite ease-in-out;
-        }
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.2; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-
-        /* CONTAINER UTAMA */
-        .container {
+        /* CONTAINER */
+        .card {
+            width: 90%;
+            max-width: 500px;
             text-align: center;
-            max-width: 600px;
-            padding: 20px;
-            z-index: 10;
+            position: relative;
+        }
+
+        /* FOTO */
+        .photo-frame {
+            width: 100%;
+            height: 400px; /* Tinggi foto tetap biar rapi */
+            background-color: #1a1a1a;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Biar foto gak gepeng */
+            opacity: 0; /* Mulai dari transparan */
+            transition: opacity 1.5s ease-in-out;
+            position: absolute;
+            top: 0; left: 0;
+        }
+        
+        .photo-frame img.active {
+            opacity: 1;
+        }
+
+        /* TEKS CAPTION */
+        .caption {
+            font-size: 1.1rem;
+            font-weight: 300;
+            min-height: 60px;
+            opacity: 0;
+            transition: opacity 1s ease;
+            color: #ccc;
+            font-style: italic;
+        }
+        .caption.active {
+            opacity: 1;
         }
 
         /* TOMBOL MULAI */
-        #start-btn {
-            background: transparent;
-            border: 1px solid #e0e0e0;
-            color: #e0e0e0;
-            padding: 15px 30px;
+        #btn-play {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 40px;
             font-size: 1.2rem;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 30px;
             cursor: pointer;
-            transition: all 0.5s ease;
-            letter-spacing: 2px;
-            border-radius: 5px;
+            z-index: 100;
+            transition: transform 0.3s;
         }
-        #start-btn:hover {
-            background: #e0e0e0;
-            color: #0a0a0a;
-            box-shadow: 0 0 15px rgba(255,255,255,0.5);
+        #btn-play:hover {
+            transform: translate(-50%, -50%) scale(1.1);
         }
 
-        /* AREA KONTEN (SEMBUNYI DULU) */
-        #content {
-            display: none;
-            opacity: 0;
-            transition: opacity 2s ease;
+        /* PROGRESS BAR (Opsional, biar kayak instastory) */
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: #333;
+            margin-bottom: 15px;
+            border-radius: 2px;
+            overflow: hidden;
         }
-
-        /* TEXT TYPEWRITER */
-        .message {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            margin-bottom: 30px;
-            min-height: 100px; /* Biar layout nggak lompat */
-            white-space: pre-line; /* Biar bisa enter di JS */
-        }
-        
-        /* FOTO AKHIR */
-        .final-photo {
-            width: 200px;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 50%; /* Lingkaran */
-            border: 2px solid #fff;
-            box-shadow: 0 0 20px rgba(255,255,255,0.2);
-            opacity: 0; /* Muncul belakangan */
-            transform: scale(0.8);
-            transition: all 2s ease;
-            margin: 0 auto;
-            display: block;
-        }
-        .show-photo {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        /* LOVE ICON */
-        .heart {
-            color: #ff4d4d;
-            font-size: 2rem;
-            margin-top: 20px;
-            animation: beat 1s infinite;
-            display: none; /* Muncul belakangan */
-        }
-        @keyframes beat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
+        .progress-bar {
+            height: 100%;
+            background: #fff;
+            width: 0%;
+            transition: width 0.5s linear;
         }
     </style>
 </head>
 <body>
 
-    <div class="stars" id="stars"></div>
-
-    <div class="container">
-        <button id="start-btn">KLIK UNTUK MEMBUKA</button>
-
-        <div id="content">
-            <p class="message" id="typing-text"></p>
-            
-            <img src="foto.jpg" alt="Special Person" class="final-photo" id="photo">
-            
-            <div class="heart" id="heart">❤</div>
-        </div>
-    </div>
-
-    <audio id="bg-music" loop>
-        <source src="https://cdn.pixabay.com/download/audio/2022/10/18/audio_31c2730e64.mp3" type="audio/mpeg">
+    <audio id="musik" loop>
+        <source src="musik.mp3" type="audio/mpeg">
     </audio>
 
+    <div class="card">
+        <div class="progress-container">
+            <div class="progress-bar" id="progress"></div>
+        </div>
+
+        <div class="photo-frame">
+            <img id="display-img" src="" alt="Moment">
+        </div>
+
+        <p class="caption" id="display-text"></p>
+
+        <button id="btn-play">Putar Kenangan</button>
+    </div>
+
     <script>
-        // DATA PESAN (GANTI TEKS DI SINI)
-        // Gunakan \n untuk baris baru
-        const fullText = `Hai, [Nama Panggilan Sayang]... \n
-        Selamat ulang tahun. \n
-        Aku nggak jago merangkai kata-kata indah yang panjang.
-        Tapi aku cuma mau bilang satu hal... \n
-        Terima kasih sudah lahir ke dunia ini.
-        Terima kasih sudah jadi bagian dari semestaku. \n
-        Semoga hari ini dan seterusnya, 
-        bahagia selalu memelukmu. \n
-        I love you, always.`;
-
-        // LOGIKA PROGRAM
-        const startBtn = document.getElementById('start-btn');
-        const contentDiv = document.getElementById('content');
-        const textElement = document.getElementById('typing-text');
-        const photoElement = document.getElementById('photo');
-        const heartElement = document.getElementById('heart');
-        const music = document.getElementById('bg-music');
-        const starsContainer = document.getElementById('stars');
-
-        // 1. BUAT BINTANG (LOOPING ala Python logic!)
-        function createStars() {
-            for(let i=0; i<50; i++) {
-                let star = document.createElement('div');
-                star.className = 'star';
-                // Posisi random
-                star.style.top = Math.random() * 100 + '%';
-                star.style.left = Math.random() * 100 + '%';
-                // Ukuran random
-                let size = Math.random() * 3 + 'px';
-                star.style.width = size;
-                star.style.height = size;
-                // Durasi kedip random
-                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
-                starsContainer.appendChild(star);
+        // --- KONFIGURASI DATA (EDIT DI SINI) ---
+        // Afdhi, ini mirip list di Python. Kamu isi foto & teksnya di sini.
+        // Pastikan nama file foto sesuai dengan yang ada di folder kamu.
+        const slides = [
+            {
+                foto: "foto1.jpg", 
+                teks: "Hai Yolanda, selamat ulang tahun..."
+            },
+            {
+                foto: "foto2.jpg", 
+                teks: "Inget nggak waktu kita jalan ke sini? Salah satu hari favoritku."
+            },
+            {
+                foto: "foto3.jpg", 
+                teks: "Terima kasih sudah jadi orang yang paling mengerti aku."
+            },
+            {
+                foto: "foto4.jpg", 
+                teks: "Semoga tahun ini membawa lebih banyak tawa dan bahagia buat kamu."
+            },
+            {
+                foto: "foto_terakhir.jpg", 
+                teks: "I love you, now and always. ❤️"
             }
+        ];
+
+        // --- LOGIKA PROGRAM ---
+        const imgElement = document.getElementById('display-img');
+        const textElement = document.getElementById('display-text');
+        const btnPlay = document.getElementById('btn-play');
+        const audio = document.getElementById('musik');
+        const progressBar = document.getElementById('progress');
+
+        let currentIndex = 0;
+
+        function showSlide(index) {
+            // 1. Fade Out dulu
+            imgElement.classList.remove('active');
+            textElement.classList.remove('active');
+
+            setTimeout(() => {
+                // 2. Ganti konten saat opacity 0
+                imgElement.src = slides[index].foto;
+                textElement.innerText = slides[index].teks;
+
+                // 3. Fade In
+                imgElement.classList.add('active');
+                textElement.classList.add('active');
+
+                // Update Progress Bar
+                let percent = ((index + 1) / slides.length) * 100;
+                progressBar.style.width = percent + '%';
+
+            }, 1000); // Tunggu 1 detik (sesuai durasi transisi CSS)
         }
 
-        // 2. FUNGSI MENGETIK (RECURSIVE)
-        let i = 0;
-        function typeWriter() {
-            if (i < fullText.length) {
-                textElement.innerHTML += fullText.charAt(i);
-                i++;
-                // Kecepatan mengetik (50ms - 100ms random biar natural)
-                setTimeout(typeWriter, Math.random() * 50 + 50); 
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) {
+                currentIndex++;
+                showSlide(currentIndex);
             } else {
-                // Setelah selesai ngetik, munculkan foto & love
-                setTimeout(() => {
-                    photoElement.classList.add('show-photo');
-                    heartElement.style.display = 'block';
-                }, 1000);
+                // Kalau sudah slide terakhir, stop interval (biar stay di foto terakhir)
+                // Atau kalau mau looping ulang, set currentIndex = 0
+                console.log("Selesai");
             }
         }
 
-        // 3. EVENT LISTENER
-        createStars(); // Jalankan bintang
+        // Event Listener Tombol Mulai
+        btnPlay.addEventListener('click', () => {
+            btnPlay.style.display = 'none'; // Hilangkan tombol
+            audio.play(); // Putar musik
+            
+            // Tampilkan slide pertama
+            showSlide(0);
 
-        startBtn.addEventListener('click', () => {
-            // Hilangkan tombol
-            startBtn.style.opacity = '0';
-            setTimeout(() => { startBtn.style.display = 'none'; }, 500);
-
-            // Munculkan konten
-            contentDiv.style.display = 'block';
-            setTimeout(() => { contentDiv.style.opacity = '1'; }, 100);
-
-            // Putar musik
-            music.volume = 0.5; // Suara pelan
-            music.play();
-
-            // Mulai ngetik setelah jeda dikit
-            setTimeout(typeWriter, 1500);
+            // Ganti slide setiap 5 detik
+            setInterval(nextSlide, 5000); 
         });
+
     </script>
 </body>
 </html>
